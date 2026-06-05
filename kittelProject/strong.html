@@ -8,6 +8,7 @@
 <script src="datos_strong.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
 <style>
+/* SECTION: variables-colores */
 :root {
     --accent: #7F222D;
     --accent-dark: #6A1C26;
@@ -30,6 +31,7 @@
     --badge-h: #C8A87A;
     --badge-g: #7F222D;
 }
+/* SECTION: dark-mode */
 .dark {
     --bg: #1A1A1A;
     --sidebar-bg: #222222;
@@ -47,8 +49,10 @@
     --welcome-bg: #1A1A1A;
     --header-bg: var(--header-bg-dark);
 }
+/* SECTION: reset-base */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; transition: background 0.2s, color 0.2s; }
+/* SECTION: header */
 header { background: var(--header-bg); color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; }
 header .logo { height: clamp(50px, 10vw, 78px); width: auto; flex-shrink: 0; }
 header h1 { font-size: 22px; font-weight: 700; white-space: nowrap; }
@@ -65,6 +69,7 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 #search.hebrew { font-family: "SBL Hebrew", "Times New Roman", serif; font-size: 18px; }
 #search.greek { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", serif; font-size: 17px; }
 main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+/* SECTION: sidebar */
 #sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: background 0.2s; }
 
 #sidebar .font-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--sidebar-border); background: var(--font-bar-bg); flex-shrink: 0; }
@@ -101,7 +106,9 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #content::-webkit-scrollbar { width: 6px; }
 #content::-webkit-scrollbar-track { background: var(--scrollbar-track); }
 #content::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+/* SECTION: entrada */
 #entry-view { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
+/* SECTION: responsive */
 #entry-view .entry-card { background: var(--card-bg); border-radius: 10px; padding: 28px 32px; box-shadow: var(--shadow); }
 #entry-view .entry-card:hover { box-shadow: var(--shadow-lg); }
 #entry-view .entry-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
@@ -147,6 +154,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 </head>
 <body>
 
+<!-- SECTION: header -->
 <header>
     <img class="logo" src="logo_strong.png" alt="Strong">
     <h1>Strong</h1>
@@ -159,8 +167,11 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     <div class="header-right">
 </header>
 
+<!-- SECTION: main -->
 <main>
+    <!-- SECTION: sidebar -->
     <div id="sidebar">
+        <!-- SECTION: font-bar -->
         <div class="font-bar">
             <label>Tamaño</label>
             <div class="font-group">
@@ -174,18 +185,22 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             <div class="no-results"></div>
         </div>
     </div>
+    <!-- SECTION: contenido -->
     <div id="content">
         <div id="entry-view"></div>
     </div>
 </main>
 
 <script>
+/* SECTION: variables-globales */
 let entries = [];
 let currentIdx = null;
 let fontSize = parseInt(localStorage.getItem('strongFontSize')) || 14;
 let isDark = localStorage.getItem('strongDark') === 'true';
 let langFilter = 'ALL';
 const FAV_KEY = 'strongFav';
+
+/* SECTION: favoritos */
 
 const searchEl = document.getElementById('search');
 const sidebarEl = document.getElementById('sidebar');
@@ -209,6 +224,7 @@ function stripAccents(s) {
     return s.normalize('NFD').replace(/[\u0300-\u036F]/g, '');
 }
 
+/* SECTION: init */
 function init() {
     entries = STRONG_DATA;
     var h = entries.filter(function(e) { return e.l === 'H'; }).length;
@@ -229,6 +245,7 @@ function init() {
     });
 }
 
+/* SECTION: welcome */
 function showWelcome() {
     const cards = ['amor', 'fe', 'gracia', 'paz', 'reino', 'luz', 'verdad', 'vida'];
     entryViewEl.innerHTML = `<div class="welcome">
@@ -241,6 +258,7 @@ function showWelcome() {
     });
 }
 
+/* SECTION: busqueda */
 function onSearch() {
     const q = searchEl.value.trim();
     if (!q) {
@@ -319,6 +337,7 @@ function onSearch() {
     }
 }
 
+/* SECTION: render-sidebar */
 function renderSidebar(matches) {
     if (!matches.length) { sidebarResults.innerHTML = '<div class="no-results">Sin resultados</div>'; return; }
     let html = '';
@@ -343,6 +362,7 @@ function renderSidebar(matches) {
     });
 }
 
+/* SECTION: show-entry */
 function showEntry(idx) {
     const e = entries[idx];
     currentIdx = idx;

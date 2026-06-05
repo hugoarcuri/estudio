@@ -6,30 +6,39 @@
 <title>Estudio Bíblico</title>
 <link rel="icon" type="image/png" href="icon.png">
 <style>
+/* SECTION: variables-colores */
 :root {
     --bg: #F5F2EB; --text: #1C1814;
     --header-bg: #1C0E0A;
     --border: #E8E0C8;
 }
+/* SECTION: reset-base */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+/* SECTION: barra-busqueda-global */
 .global-search { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 6px 20px; background: var(--bg); }
 .global-search .bar { width: 800px; max-width: 100%; background: #fff; border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); padding: 6px 14px; display: flex; align-items: center; gap: 8px; transition: box-shadow 0.2s; }
 .global-search .bar:focus-within { box-shadow: 0 4px 20px rgba(0,0,0,0.14); }
 .global-search .bar .icon { font-size: 18px; flex-shrink: 0; color: #B0A898; }
 .global-search .bar input { flex: 1; border: none; padding: 6px 0; font-size: 15px; font-family: "Inter", system-ui, sans-serif; outline: none; background: transparent; color: #1C1814; }
 .global-search .bar input::placeholder { color: #B8AFA0; }
+/* SECTION: boton-dark-mode */
 #darkToggle { position: relative; z-index: 1; background: none; border: 1px solid rgba(0,0,0,0.15); color: var(--text); font-size: 15px; padding: 5px 11px; border-radius: 6px; cursor: pointer; line-height: 1; flex-shrink: 0; transition: background 0.15s; }
 #darkToggle:hover { background: rgba(0,0,0,0.05); }
 .dark { --bg: #1C1410; --text: #E8E0C8; --border: #3A3228; }
+/* SECTION: columnas-iframe */
 main { flex: 1; display: flex; overflow: hidden; }
 .col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .col:first-child { border-right: none; }
+/* SECTION: divisor-arrastrable */
 #divider { width: 5px; cursor: col-resize; flex-shrink: 0; background: var(--border); transition: background 0.15s; position: relative; z-index: 5; }
 #divider:hover, #divider.active { background: #B8A87A; }
 .col-body { flex: 1; min-height: 0; }
 .col-body iframe { width: 100%; height: 100%; border: none; display: block; }
+/* SECTION: contador-visitas */
 #visitCounter { position: fixed; bottom: 8px; right: 10px; font-size: 12px; color: #8A8072; background: #fff; padding: 5px 12px; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); z-index: 10; opacity: 0.75; user-select: none; }
+/* SECTION: responsive */
+/* SECTION: tabs-mobile */
 .mobile-tabs { display: none; }
 @media (max-width: 700px) {
     .mobile-tabs { display: flex; background: var(--header-bg); }
@@ -44,6 +53,7 @@ main { flex: 1; display: flex; overflow: hidden; }
 </head>
 <body>
 
+<!-- SECTION: barra-busqueda-global -->
 <div class="global-search">
     <div class="bar">
         <span class="icon">🔍</span>
@@ -52,10 +62,12 @@ main { flex: 1; display: flex; overflow: hidden; }
     <button id="darkToggle">🌙</button>
 </div>
 
+<!-- SECTION: tabs-mobile -->
 <div class="mobile-tabs">
     <button class="active" data-tab="kittel">Kittel</button>
     <button data-tab="strong">Strong</button>
 </div>
+<!-- SECTION: columnas-iframe -->
 <main>
     <div class="col active" id="col-kittel">
         <div class="col-body">
@@ -71,6 +83,7 @@ main { flex: 1; display: flex; overflow: hidden; }
 </main>
 
 <script>
+/* SECTION: dark-mode-toggle */
 var globalSearch = document.getElementById('globalSearch');
 var frameKittel = document.getElementById('frameKittel');
 var frameStrong = document.getElementById('frameStrong');
@@ -89,6 +102,7 @@ darkToggle.addEventListener('click', function() {
     frameStrong.contentWindow.postMessage({ type: 'toggleDark', dark: isDark }, '*');
 });
 
+/* SECTION: divisor-arrastrable */
 var divider = document.getElementById('divider');
 var colKittel = document.getElementById('col-kittel');
 var colStrong = document.getElementById('col-strong');
@@ -112,6 +126,7 @@ document.addEventListener('mouseup', function() {
     document.body.style.cursor = ''; document.body.style.userSelect = ''; }
 });
 
+/* SECTION: tabs-mobile */
 document.querySelectorAll('.mobile-tabs button').forEach(function(btn) {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.mobile-tabs button').forEach(function(b) { b.classList.remove('active'); });
@@ -121,6 +136,7 @@ document.querySelectorAll('.mobile-tabs button').forEach(function(btn) {
     });
 });
 
+/* SECTION: busqueda-global */
 globalSearch.addEventListener('input', function() {
     sendSearch(globalSearch.value);
 });

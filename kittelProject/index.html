@@ -8,6 +8,7 @@
 <script src="datos.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
 <style>
+/* SECTION: variables-colores */
 :root {
     --accent: #C8B88A;
     --accent-dark: #B8A87A;
@@ -28,6 +29,7 @@
     --griego-color: #2A0808;
     --welcome-bg: #F5F2EB;
 }
+/* SECTION: dark-mode */
 .dark {
     --bg: #1C1410;
     --sidebar-bg: #261E18;
@@ -45,9 +47,11 @@
     --griego-color: #E8E0C8;
     --welcome-bg: #1C1410;
 }
+/* SECTION: reset-base */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; transition: background 0.2s, color 0.2s; }
 
+/* SECTION: header */
 header { background: var(--header-bg); color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; }
 header .logo { height: clamp(50px, 10vw, 78px); width: auto; flex-shrink: 0; }
 header h1 { font-size: 22px; font-weight: 700; white-space: nowrap; }
@@ -65,6 +69,7 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 
 main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 
+/* SECTION: sidebar */
 #sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: background 0.2s; }
 #sidebar .font-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--sidebar-border); background: var(--font-bar-bg); flex-shrink: 0; transition: background 0.2s; }
 #sidebar .font-bar label { font-size: 12px; color: var(--text-muted); margin-right: 2px; font-weight: 700; }
@@ -103,7 +108,9 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #content::-webkit-scrollbar-track { background: var(--scrollbar-track); }
 #content::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 
+/* SECTION: entrada */
 #entry-view { padding: 30px 40px; max-width: 1030px; margin: 0 auto; }
+/* SECTION: responsive */
 #entry-view .entry-card { background: var(--card-bg); border-radius: 10px; padding: 32px 36px; box-shadow: var(--shadow); transition: box-shadow 0.2s, background 0.2s; }
 #entry-view .entry-card:hover { box-shadow: var(--shadow-lg); }
 #entry-view .entry-header { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--accent); }
@@ -176,6 +183,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 </head>
 <body>
 
+<!-- SECTION: header -->
 <header>
     <img class="logo" src="logo.png" alt="HAEDO">
     <h1>Kittel</h1>
@@ -187,8 +195,11 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     <div class="header-right">
 </header>
 
+<!-- SECTION: main -->
 <main>
+    <!-- SECTION: sidebar -->
     <div id="sidebar">
+        <!-- SECTION: font-bar -->
         <div class="font-bar">
             <label>Tamaño</label>
             <div class="font-group">
@@ -202,12 +213,14 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             <div class="no-results"></div>
         </div>
     </div>
+    <!-- SECTION: contenido -->
     <div id="content">
         <div id="entry-view"></div>
     </div>
 </main>
 
 <script>
+/* SECTION: variables-globales */
 let entries = [];
 let currentMatch = null;
 let fontSize = parseInt(localStorage.getItem('kittelFontSize')) || 14;
@@ -215,6 +228,7 @@ let isDark = localStorage.getItem('kittelDark') === 'true';
 let searchLang = 'ES';
 const FAV_KEY = 'kittelFav';
 
+/* SECTION: transliteracion-griega */
 const GREEK_MAP = {
     'a':'α','b':'β','g':'γ','d':'δ','e':'ε','z':'ζ','h':'η','i':'ι','k':'κ',
     'l':'λ','m':'μ','n':'ν','x':'ξ','o':'ο','p':'π','r':'ρ','s':'σ','t':'τ',
@@ -266,6 +280,7 @@ const entryViewEl = document.getElementById('entry-view');
 if (isDark) document.documentElement.classList.add('dark');
 fontSizeLabel.textContent = fontSize;
 
+/* SECTION: favoritos */
 function getFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || {}; } catch { return {}; } }
 function isFav(idx) { return !!getFavs()[idx]; }
 function toggleFav(idx) {
@@ -276,8 +291,9 @@ function toggleFav(idx) {
     if (btn) btn.classList.toggle('saved', !!f[idx]);
 }
 
+/* SECTION: init */
 function init() {
-    entries = KITTEL_DATA;
+    entries = KITTEL_DATA; /* SECTION: datos-cargados */
     var totalTerms = entries.reduce(function(a, e) { return a + e.e.length; }, 0);
     var grRaw = '';
     searchEl.addEventListener('focus', function() {
@@ -329,6 +345,7 @@ function init() {
     });
 }
 
+/* SECTION: welcome */
 function showWelcome() {
     const cards = ['Amor', 'Fe', 'Gracia', 'Misericordia', 'Justicia', 'Reino', 'Espíritu'];
     entryViewEl.innerHTML = `<div class="welcome">
@@ -346,6 +363,7 @@ function showWelcome() {
     });
 }
 
+/* SECTION: busqueda */
 function onSearch() {
     const q = searchEl.value.toLowerCase().trim();
     if (!q) {
@@ -393,6 +411,7 @@ function onSearch() {
     }
 }
 
+/* SECTION: render-sidebar */
 function renderSidebar(matches) {
     if (matches.length === 0) {
         sidebarResults.innerHTML = '<div class="no-results">Sin resultados</div>';
@@ -420,6 +439,7 @@ function renderSidebar(matches) {
     });
 }
 
+/* SECTION: show-entry */
 function showEntry(idx) {
     const e = entries[idx];
     currentMatch = idx;
