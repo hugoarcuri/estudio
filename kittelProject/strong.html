@@ -70,7 +70,8 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 #search.greek { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", serif; font-size: 17px; }
 main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 /* SECTION: sidebar */
-#sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: background 0.2s; }
+#sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: width 0.3s ease, opacity 0.3s ease, min-width 0.3s ease, padding 0.3s ease, border 0.3s ease, background 0.2s; }
+#sidebar.sidebar-hidden { width: 0; min-width: 0; padding: 0; border: none; opacity: 0; overflow: hidden; pointer-events: none; }
 
 #sidebar .font-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--sidebar-border); background: var(--font-bar-bg); flex-shrink: 0; }
 #sidebar .font-bar label { font-size: 12px; color: var(--text-muted); margin-right: 2px; font-weight: 700; }
@@ -246,6 +247,7 @@ function init() {
     var h = entries.filter(function(e) { return e.l === 'H'; }).length;
     var g = entries.filter(function(e) { return e.l === 'G'; }).length;
     searchEl.addEventListener('input', function() { onSearch(); });
+    searchEl.addEventListener('focus', function() { sidebarEl.classList.remove('sidebar-hidden'); });
     buildLetterIndex();
     if (searchEl.value) onSearch(); else showWelcome();
     document.querySelectorAll('.font-btn').forEach(function(btn) {
@@ -276,6 +278,7 @@ function showWelcome() {
 
 /* SECTION: busqueda */
 function onSearch() {
+    sidebarEl.classList.remove('sidebar-hidden');
     const q = searchEl.value.trim();
     if (!q) {
         sidebarResults.innerHTML = '<div class="no-results"></div>';
@@ -372,6 +375,7 @@ function renderSidebar(matches) {
             if (window.innerWidth <= 700) sidebarEl.classList.add('sidebar-hidden');
             showEntry(idx);
             document.getElementById('letterBar').classList.add('collapsed');
+            sidebarEl.classList.add('sidebar-hidden');
         });
     });
 }
