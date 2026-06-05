@@ -30,9 +30,6 @@ body { font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-
 main { flex: 1; display: flex; overflow: hidden; }
 .col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .col:first-child { border-right: none; }
-/* SECTION: divisor-arrastrable */
-#divider { width: 5px; cursor: col-resize; flex-shrink: 0; background: var(--border); transition: background 0.15s; position: relative; z-index: 5; }
-#divider:hover, #divider.active { background: #B8A87A; }
 .col-body { flex: 1; min-height: 0; }
 .col-body iframe { width: 100%; height: 100%; border: none; display: block; }
 /* SECTION: contador-visitas */
@@ -44,7 +41,6 @@ main { flex: 1; display: flex; overflow: hidden; }
     .mobile-tabs { display: flex; background: var(--header-bg); }
     .mobile-tabs button { flex: 1; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600; padding: 10px; cursor: pointer; transition: background 0.15s, color 0.15s; }
     .mobile-tabs button.active { color: #fff; background: rgba(255,255,255,0.1); }
-    #divider { display: none; }
     main { flex-direction: column; }
     .col { flex: none !important; height: calc(100vh - 98px); border-right: none; border-bottom: none; display: none; }
     .col.active { display: flex; }
@@ -74,7 +70,6 @@ main { flex: 1; display: flex; overflow: hidden; }
             <iframe src="kittelProject/index.html" id="frameKittel" name="frameKittel"></iframe>
         </div>
     </div>
-    <div id="divider"></div>
     <div class="col" id="col-strong">
         <div class="col-body">
             <iframe src="kittelProject/strong.html" id="frameStrong" name="frameStrong"></iframe>
@@ -100,30 +95,6 @@ darkToggle.addEventListener('click', function() {
     darkToggle.textContent = isDark ? '☀️' : '🌙';
     frameKittel.contentWindow.postMessage({ type: 'toggleDark', dark: isDark }, '*');
     frameStrong.contentWindow.postMessage({ type: 'toggleDark', dark: isDark }, '*');
-});
-
-/* SECTION: divisor-arrastrable */
-var divider = document.getElementById('divider');
-var colKittel = document.getElementById('col-kittel');
-var colStrong = document.getElementById('col-strong');
-var isDragging = false;
-
-divider.addEventListener('mousedown', function(e) {
-    isDragging = true; divider.classList.add('active');
-    document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
-});
-
-document.addEventListener('mousemove', function(e) {
-    if (!isDragging) return;
-    var total = colKittel.parentElement.offsetWidth;
-    var pct = (e.clientX - colKittel.parentElement.getBoundingClientRect().left) / total * 100;
-    pct = Math.max(20, Math.min(80, pct));
-    colKittel.style.flex = '0 0 ' + pct + '%'; colStrong.style.flex = '0 0 ' + (100 - pct) + '%';
-});
-
-document.addEventListener('mouseup', function() {
-    if (isDragging) { isDragging = false; divider.classList.remove('active');
-    document.body.style.cursor = ''; document.body.style.userSelect = ''; }
 });
 
 /* SECTION: tabs-mobile */
