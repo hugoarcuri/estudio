@@ -292,12 +292,12 @@ function onSearch() {
 
             // Match in synonyms (s)
             if (st.some(s => s === sq)) score = 1000;
-            else if (st.some(s => s.startsWith(sq))) score = 800;
-            else if (st.some(s => new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(s))) score = 600;
+            else if (sq.length > 2 && st.some(s => s.startsWith(sq))) score = 800;
+            else if (sq.length > 2 && st.some(s => new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(s))) score = 600;
 
             // Match in Strong number (n)
             else if (nt === sq) score = 600;
-            else if (nt.includes(sq)) score = 400;
+            else if (sq.length > 2 && nt.includes(sq)) score = 400;
 
             // Match in original word (w) - only for longer queries
             else if (sq.length > 2 && wt === sq) score = 300;
