@@ -14,8 +14,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 .global-search { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 20px 20px; background: var(--bg); position: relative; overflow: hidden; }
-.bg-words { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 12px 24px; padding: 10px 20px; font-size: 13px; color: rgba(0,0,0,0.06); user-select: none; pointer-events: none; font-family: "SBL Hebrew", "Gentium Plus", "Noto Serif", serif; }
-.dark .bg-words { color: rgba(255,255,255,0.06); }
+.bg-words { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 10px 22px; padding: 10px 20px; font-size: 16px; color: rgba(0,0,0,0.18); user-select: none; pointer-events: none; font-family: "SBL Hebrew", "Gentium Plus", "Noto Serif", "Times New Roman", serif; letter-spacing: 0.5px; }
+.dark .bg-words { color: rgba(255,255,255,0.18); }
 .global-search .bar { width: 800px; max-width: 100%; background: #fff; border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); padding: 6px 14px; display: flex; align-items: center; gap: 8px; transition: box-shadow 0.2s; }
 .global-search .bar:focus-within { box-shadow: 0 4px 20px rgba(0,0,0,0.14); }
 .global-search .bar .icon { font-size: 18px; flex-shrink: 0; color: #B0A898; }
@@ -138,7 +138,7 @@ function sendSearch(q) {
     var greekWords = ['θεός', 'κύριος', 'Χριστός', 'Ἰησοῦς', 'πνεῦμα', 'ἀγάπη', 'πίστις', 'ἐλπίς', 'χάρις', 'εἰρήνη', 'δόξα', 'βασιλεία', 'ἐκκλησία', 'ἄγγελος', 'ἀπόστολος', 'λόγος', 'ἀλήθεια', 'φῶς', 'ζωή', 'θάνατος', 'ἁμαρτία', 'σωτηρία', 'δικαιοσύνη', 'ἔλεος', 'κρίσις', 'ούρανός', 'γῆ', 'θάλασσα', 'ἄνθρωπος', 'πατήρ', 'υἱός', 'μήτηρ', 'ἀδελφός', 'σάρξ', 'αἷμα', 'ὕδωρ', 'πῦρ', 'νόμος', 'ἐντολή', 'διαθήκη'];
     var all = hebrewWords.concat(greekWords);
     var html = '';
-    for (var i = 0; i < 40; i++) {
+    for (var i = 0; i < 60; i++) {
         html += '<span>' + all[Math.floor(Math.random() * all.length)] + '</span>';
     }
     document.getElementById('bgWords').innerHTML = html;
