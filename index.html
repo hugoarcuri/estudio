@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Estudio Bíblico</title>
+<link rel="icon" type="image/png" href="kittelProject/logo.png">
+<style>
+:root {
+    --bg: #F5F2EB; --text: #1C1814;
+    --header-bg: #1C0E0A;
+    --border: #E8E0C8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+.global-search { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 6px 20px; background: var(--bg); }
+.global-search .bar { width: 800px; max-width: 100%; background: #fff; border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); padding: 6px 14px; display: flex; align-items: center; gap: 8px; transition: box-shadow 0.2s; }
+.global-search .bar:focus-within { box-shadow: 0 4px 20px rgba(0,0,0,0.14); }
+.global-search .bar .icon { font-size: 18px; flex-shrink: 0; color: #B0A898; }
+.global-search .bar input { flex: 1; border: none; padding: 6px 0; font-size: 15px; font-family: "Inter", system-ui, sans-serif; outline: none; background: transparent; color: #1C1814; }
+.global-search .bar input::placeholder { color: #B8AFA0; }
+#darkToggle { background: none; border: 1px solid rgba(0,0,0,0.15); color: var(--text); font-size: 15px; padding: 5px 11px; border-radius: 6px; cursor: pointer; line-height: 1; flex-shrink: 0; transition: background 0.15s; }
+#darkToggle:hover { background: rgba(0,0,0,0.05); }
+.dark { --bg: #1C1410; --text: #E8E0C8; --border: #3A3228; }
+main { flex: 1; display: flex; overflow: hidden; }
+.col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.col:first-child { border-right: none; }
+#divider { width: 5px; cursor: col-resize; flex-shrink: 0; background: var(--border); transition: background 0.15s; position: relative; z-index: 5; }
+#divider:hover, #divider.active { background: #B8A87A; }
+.col-body { flex: 1; min-height: 0; }
+.col-body iframe { width: 100%; height: 100%; border: none; display: block; }
+#visitCounter { position: fixed; bottom: 8px; right: 10px; font-size: 12px; color: #8A8072; background: #fff; padding: 5px 12px; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); z-index: 10; opacity: 0.75; user-select: none; }
+.mobile-tabs { display: none; }
+@media (max-width: 700px) {
+    .mobile-tabs { display: flex; background: var(--header-bg); }
+    .mobile-tabs button { flex: 1; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600; padding: 10px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .mobile-tabs button.active { color: #fff; background: rgba(255,255,255,0.1); }
+    #divider { display: none; }
+    main { flex-direction: column; }
+    .col { flex: none !important; height: calc(100vh - 98px); border-right: none; border-bottom: none; display: none; }
+    .col.active { display: flex; }
+}
+</style>
+</head>
+<body>
+
+<div class="global-search">
+    <div class="bar">
+        <span class="icon">🔍</span>
+        <input type="text" id="globalSearch" placeholder="Buscar simultáneamente en Kittel y Strong…">
+    </div>
+    <button id="darkToggle">🌙</button>
+</div>
+
+<div class="mobile-tabs">
+    <button class="active" data-tab="kittel">Kittel</button>
+    <button data-tab="strong">Strong</button>
+</div>
+<main>
+    <div class="col active" id="col-kittel">
+        <div class="col-body">
+            <iframe src="kittelProject/index.html" id="frameKittel" name="frameKittel"></iframe>
+        </div>
+    </div>
+    <div id="divider"></div>
+    <div class="col" id="col-strong">
+        <div class="col-body">
+            <iframe src="kittelProject/strong.html" id="frameStrong" name="frameStrong"></iframe>
+        </div>
+    </div>
+</main>
+
+<script>
+var globalSearch = document.getElementById('globalSearch');
+var frameKittel = document.getElementById('frameKittel');
+var frameStrong = document.getElementById('frameStrong');
+var darkToggle = document.getElementById('darkToggle');
+
+var isDark = localStorage.getItem('globalDark') === 'true';
+if (isDark) document.documentElement.classList.add('dark');
+darkToggle.textContent = isDark ? '☀️' : '🌙';
+
+darkToggle.addEventListener('click', function() {
+    isDark = !isDark;
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('globalDark', isDark);
+    darkToggle.textContent = isDark ? '☀️' : '🌙';
+    frameKittel.contentWindow.postMessage({ type: 'toggleDark', dark: isDark }, '*');
+    frameStrong.contentWindow.postMessage({ type: 'toggleDark', dark: isDark }, '*');
+});
+
+var divider = document.getElementById('divider');
+var colKittel = document.getElementById('col-kittel');
+var colStrong = document.getElementById('col-strong');
+var isDragging = false;
+
+divider.addEventListener('mousedown', function(e) {
+    isDragging = true; divider.classList.add('active');
+    document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
+});
+
+document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var total = colKittel.parentElement.offsetWidth;
+    var pct = (e.clientX - colKittel.parentElement.getBoundingClientRect().left) / total * 100;
+    pct = Math.max(20, Math.min(80, pct));
+    colKittel.style.flex = '0 0 ' + pct + '%'; colStrong.style.flex = '0 0 ' + (100 - pct) + '%';
+});
+
+document.addEventListener('mouseup', function() {
+    if (isDragging) { isDragging = false; divider.classList.remove('active');
+    document.body.style.cursor = ''; document.body.style.userSelect = ''; }
+});
+
+document.querySelectorAll('.mobile-tabs button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.mobile-tabs button').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.col').forEach(function(c) { c.classList.remove('active'); });
+        document.getElementById('col-' + btn.dataset.tab).classList.add('active');
+    });
+});
+
+globalSearch.addEventListener('input', function() {
+    sendSearch(globalSearch.value);
+});
+
+function sendSearch(q) {
+    frameKittel.contentWindow.postMessage({ type: 'search', query: q }, '*');
+    frameStrong.contentWindow.postMessage({ type: 'search', query: q }, '*');
+}
+
+(function() {
+    const ck = 'globalVisits';
+    let v = parseInt(localStorage.getItem(ck)) || 0;
+    if (!sessionStorage.getItem('globalVisited')) {
+        v++;
+        localStorage.setItem(ck, v);
+        sessionStorage.setItem('globalVisited', '1');
+    }
+    var el = document.createElement('div');
+    el.id = 'visitCounter';
+    el.textContent = '👁 ' + v + (v === 1 ? ' visita' : ' visitas');
+    document.body.appendChild(el);
+})();
+</script>
+</body>
+</html>

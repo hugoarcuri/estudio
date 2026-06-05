@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Strong — Diccionario de Palabras Originales</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="datos_strong.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+<style>
+:root {
+    --accent: #7F222D;
+    --accent-dark: #6A1C26;
+    --header-bg: #010101;
+    --header-bg-dark: #151515;
+    --bg: #F5F0E5;
+    --sidebar-bg: #FCF9F2;
+    --sidebar-border: #E8E0C8;
+    --card-bg: #FFFFFF;
+    --text: #1C1410;
+    --text-muted: #8A7A72;
+    --text-light: #B0A098;
+    --font-bar-bg: #F0ECE4;
+    --badge-bg: #F0E8D0;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+    --scrollbar-track: #F0ECE4;
+    --scrollbar-thumb: #7F222D;
+    --welcome-bg: #F5F0E5;
+    --badge-h: #C8A87A;
+    --badge-g: #7F222D;
+}
+.dark {
+    --bg: #1A1A1A;
+    --sidebar-bg: #222222;
+    --sidebar-border: #333333;
+    --card-bg: #282828;
+    --text: #E8E0C8;
+    --text-muted: #A89880;
+    --text-light: #7A7062;
+    --font-bar-bg: #262626;
+    --badge-bg: #3A3A3A;
+    --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.4);
+    --scrollbar-track: #262626;
+    --scrollbar-thumb: #7F222D;
+    --welcome-bg: #1A1A1A;
+    --header-bg: var(--header-bg-dark);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; transition: background 0.2s, color 0.2s; }
+header { background: var(--header-bg); color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; }
+header .logo { height: clamp(50px, 10vw, 78px); width: auto; flex-shrink: 0; }
+header h1 { font-size: 22px; font-weight: 700; white-space: nowrap; }
+header input { flex: 0 1 300px; min-width: 130px; padding: 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", system-ui, sans-serif; outline: none; background: #fff; }
+header input::placeholder { color: #999; font-size: 14px; }
+header input:focus { box-shadow: 0 0 0 3px var(--accent); }
+.header-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+#langFilter { display: flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+#langFilter button { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 700; padding: 5px 12px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+#langFilter button:hover { background: rgba(255,255,255,0.12); }
+#langFilter button.active { background: var(--accent); color: #fff; }
+.count-badge { display: inline-block; background: rgba(255,255,255,0.15); border-radius: 6px; padding: 0 5px; font-size: 10px; margin-left: 2px; line-height: 1.4; }
+
+#search.hebrew { font-family: "SBL Hebrew", "Times New Roman", serif; font-size: 18px; }
+#search.greek { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", serif; font-size: 17px; }
+main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+#sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: background 0.2s; }
+
+#sidebar .font-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--sidebar-border); background: var(--font-bar-bg); flex-shrink: 0; }
+#sidebar .font-bar label { font-size: 12px; color: var(--text-muted); margin-right: 2px; font-weight: 700; }
+#sidebar .font-bar .font-group { display: inline-flex; align-items: center; border: 1px solid rgba(0,0,0,0.08); border-radius: 6px; overflow: hidden; }
+#sidebar .font-bar .font-group .font-btn { background: none; border: none; font-size: 15px; font-weight: 700; padding: 4px 10px; cursor: pointer; line-height: 1.3; color: var(--text-muted); }
+#sidebar .font-bar .font-group .font-btn:hover { background: var(--accent); }
+#sidebar .font-bar .font-group .font-btn:first-child { border-right: 1px solid rgba(0,0,0,0.08); }
+#sidebar .font-bar #fontSizeLabel { font-size: 13px; color: var(--text-muted); min-width: 22px; text-align: center; font-weight: 600; }
+#sidebar .sidebar-results { flex: 1; overflow-y: auto; }
+#sidebar .sidebar-results::-webkit-scrollbar { width: 6px; }
+#sidebar .sidebar-results::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+#sidebar .sidebar-results::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+#sidebar .match { padding: 12px 16px; border-bottom: 1px solid var(--sidebar-border); cursor: pointer; transition: background 0.15s; }
+#sidebar .match:hover { background: #E4F0F4; }
+.dark #sidebar .match:hover { background: #243434; }
+#sidebar .match.active { background: #D0E8F0; border-left: 4px solid var(--accent); }
+.dark #sidebar .match.active { background: #2A4040; }
+#sidebar .match .word { font-size: 17px; font-weight: 600; }
+#sidebar .match .translit { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
+#sidebar .match .spanish { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+#sidebar .match .num-badge { display: inline-block; background: var(--badge-bg); color: var(--text-muted); font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 8px; margin-right: 6px; }
+#sidebar .match .lang-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 6px; color: #fff; }
+#sidebar .match .lang-badge.H { background: var(--badge-h); }
+#sidebar .match .lang-badge.G { background: var(--badge-g); }
+#sidebar .no-results { padding: 40px 18px; text-align: center; color: var(--text-light); font-size: 15px; }
+#sidebar .results-footer { padding: 10px 18px; text-align: center; color: var(--text-light); font-size: 12px; border-top: 1px solid var(--sidebar-border); }
+#sidebar .letter-bar { display: flex; flex-wrap: wrap; gap: 1px; padding: 5px 10px; border-bottom: 1px solid var(--sidebar-border); background: var(--sidebar-bg); flex-shrink: 0; }
+#sidebar .letter-bar .l { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 26px; font-size: 15px; font-weight: 600; cursor: pointer; border-radius: 4px; color: var(--text-muted); transition: background 0.12s, color 0.12s; user-select: none; }
+#sidebar .letter-bar .l:hover { background: var(--accent); color: #fff; }
+#sidebar .letter-bar .l.active { background: var(--accent); color: #fff; }
+#sidebar .letter-bar .l .cnt { font-size: 8px; font-weight: 400; margin-left: 1px; opacity: 0.6; }
+#content { flex: 1; overflow-y: auto; min-height: 0; padding: 0; }
+#content::-webkit-scrollbar { width: 6px; }
+#content::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+#content::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+#entry-view { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
+#entry-view .entry-card { background: var(--card-bg); border-radius: 10px; padding: 28px 32px; box-shadow: var(--shadow); }
+#entry-view .entry-card:hover { box-shadow: var(--shadow-lg); }
+#entry-view .entry-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+#entry-view .entry-header .word-line { font-size: 26px; font-weight: 700; }
+#entry-view .entry-header .word-line .lang-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 8px; color: #fff; vertical-align: middle; }
+#entry-view .entry-header .word-line .lang-badge.H { background: var(--badge-h); }
+#entry-view .entry-header .word-line .lang-badge.G { background: var(--badge-g); }
+#entry-view .entry-header .translit-line { font-size: 16px; color: var(--text-muted); margin-top: 2px; }
+#entry-view .entry-header .spanish-line { font-size: 15px; margin-top: 6px; }
+#entry-view .entry-header .spanish-line .badge { display: inline-block; background: var(--badge-bg); color: var(--text); font-size: 13px; padding: 3px 10px; border-radius: 12px; margin-right: 4px; margin-top: 3px; }
+#entry-view .entry-header .header-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+#entry-view .entry-header .header-meta .page-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; }
+#entry-view .entry-header .header-meta .strong-num { display: inline-block; background: var(--header-bg); color: #fff; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 10px; }
+#entry-view .entry-header .header-meta .copy-btn, #entry-view .entry-header .header-meta .fav-btn { background: none; border: 1px solid var(--sidebar-border); font-size: 12px; padding: 3px 10px; border-radius: 6px; cursor: pointer; color: var(--text-muted); }
+#entry-view .entry-header .header-meta .copy-btn:hover, #entry-view .entry-header .header-meta .fav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+#entry-view .entry-header .header-meta .fav-btn.saved { background: var(--accent); color: #fff; border-color: var(--accent); }
+#entry-view .entry-def { font-size: 17px; line-height: 1.85; color: var(--text); }
+#entry-view .entry-def .word-orig { font-size: 1.1em; font-weight: 700; }
+.welcome { background: var(--welcome-bg); min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
+.welcome h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.welcome .sub { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+.welcome .quick-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 480px; }
+.welcome .quick-card { background: var(--card-bg); border: 1px solid var(--sidebar-border); border-radius: 10px; padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background 0.15s, box-shadow 0.15s; box-shadow: var(--shadow); }
+.welcome .quick-card:hover { background: var(--accent); color: #fff; box-shadow: var(--shadow-lg); }
+
+@media (max-width: 700px) {
+    body { overflow-y: auto; }
+    header { gap: 8px; padding: 8px 12px; }
+
+    header h1 { font-size: 17px; }
+    header input { flex: 1 1 100%; order: 5; min-width: 0; }
+    #langFilter { order: 3; }
+    .header-right { order: 4; }
+    main { flex-direction: column; overflow: visible; }
+    #sidebar { width: 100%; min-width: unset; height: auto; max-height: 50vh; border-right: none; border-bottom: 1px solid var(--sidebar-border); overflow-y: auto; }
+
+    #entry-view { padding: 16px; }
+    #entry-view .entry-card { padding: 18px; }
+    #entry-view .entry-header .word-line { font-size: 22px; }
+    #entry-view .entry-def { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <img class="logo" src="logo_strong.png" alt="Strong">
+    <h1>Strong</h1>
+    <input type="text" id="search" placeholder="Buscar por palabra española, Strong, hebreo o griego…" autofocus>
+    <div id="langFilter">
+        <button class="active" data-lang="ALL">TODOS <span class="count-badge"></span></button>
+        <button data-lang="H">H <span class="count-badge"></span></button>
+        <button data-lang="G">G <span class="count-badge"></span></button>
+    </div>
+    <div class="header-right">
+</header>
+
+<main>
+    <div id="sidebar">
+        <div class="font-bar">
+            <label>Tamaño</label>
+            <div class="font-group">
+                <button class="font-btn" id="fontDecr">A−</button>
+                <span id="fontSizeLabel">16</span>
+                <button class="font-btn" id="fontIncr">A+</button>
+            </div>
+        </div>
+        <div class="letter-bar" id="letterBar"></div>
+        <div class="sidebar-results">
+            <div class="no-results"></div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="entry-view"></div>
+    </div>
+</main>
+
+<script>
+let entries = [];
+let currentIdx = null;
+let fontSize = parseInt(localStorage.getItem('strongFontSize')) || 16;
+let isDark = localStorage.getItem('strongDark') === 'true';
+let langFilter = 'ALL';
+const FAV_KEY = 'strongFav';
+
+const searchEl = document.getElementById('search');
+const sidebarEl = document.getElementById('sidebar');
+const sidebarResults = document.querySelector('.sidebar-results');
+const fontSizeLabel = document.getElementById('fontSizeLabel');
+const entryViewEl = document.getElementById('entry-view');
+if (isDark) document.documentElement.classList.add('dark');
+fontSizeLabel.textContent = fontSize;
+
+function getFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || {}; } catch { return {}; } }
+function isFav(idx) { return !!getFavs()[idx]; }
+function toggleFav(idx) {
+    const f = getFavs();
+    if (f[idx]) { delete f[idx]; } else { f[idx] = true; }
+    localStorage.setItem(FAV_KEY, JSON.stringify(f));
+    const btn = entryViewEl.querySelector('.fav-btn');
+    if (btn) btn.classList.toggle('saved', !!f[idx]);
+}
+
+function stripAccents(s) {
+    return s.normalize('NFD').replace(/[\u0300-\u036F]/g, '');
+}
+
+function init() {
+    entries = STRONG_DATA;
+    var h = entries.filter(function(e) { return e.l === 'H'; }).length;
+    var g = entries.filter(function(e) { return e.l === 'G'; }).length;
+    searchEl.addEventListener('input', function() { onSearch(); });
+    buildLetterIndex();
+    if (searchEl.value) onSearch(); else showWelcome();
+    document.querySelectorAll('.font-btn').forEach(function(btn) {
+        if (btn.id === 'fontIncr') btn.addEventListener('click', function() { changeFont(2); });
+        if (btn.id === 'fontDecr') btn.addEventListener('click', function() { changeFont(-2); });
+    });
+    document.querySelectorAll('#langFilter button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            langFilter = btn.dataset.lang;
+            document.querySelectorAll('#langFilter button').forEach(function(b) { b.classList.toggle('active', b === btn); });
+            onSearch();
+        });
+    });
+}
+
+function showWelcome() {
+    const cards = ['amor', 'fe', 'gracia', 'paz', 'reino', 'luz', 'verdad', 'vida'];
+    entryViewEl.innerHTML = `<div class="welcome">
+        <h2>Strong — Diccionario de Palabras Originales</h2>
+        <p class="sub">Hebreo, Arameo y Griego del AT y NT</p>
+        <div class="quick-grid">${cards.map(w => `<div class="quick-card" data-w="${w}">${w}</div>`).join('')}</div>
+    </div>`;
+    entryViewEl.querySelectorAll('.quick-card').forEach(el => {
+        el.addEventListener('click', () => { searchEl.value = el.dataset.w; onSearch(); });
+    });
+}
+
+function onSearch() {
+    const q = searchEl.value.trim();
+    if (!q) {
+        sidebarResults.innerHTML = '<div class="no-results"></div>';
+        showWelcome();
+        currentIdx = null;
+        document.querySelectorAll('#langFilter .count-badge').forEach(function(s) { s.textContent = ''; });
+        return;
+    }
+
+    const matches = [];
+    const sq = stripAccents(q.toLowerCase());
+
+    // Try numeric search first
+    const num = parseInt(q);
+    const isNum = !isNaN(num);
+
+    for (let i = 0; i < entries.length; i++) {
+        const e = entries[i];
+        if (langFilter !== 'ALL' && e.l !== langFilter) continue;
+
+        let score = 0;
+
+        if (isNum && e.n === num) {
+            score = 2000;
+        } else {
+            const wt = stripAccents(e.w.toLowerCase());
+            const tt = stripAccents(e.t.toLowerCase());
+            const nt = String(e.n);
+            const st = e.s.map(s => stripAccents(s.toLowerCase()));
+
+            // Match in synonyms (s)
+            if (st.some(s => s === sq)) score = 1000;
+            else if (st.some(s => s.startsWith(sq))) score = 800;
+            else if (st.some(s => new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(s))) score = 600;
+
+            // Match in Strong number (n)
+            else if (nt === sq) score = 600;
+            else if (nt.includes(sq)) score = 400;
+
+            // Match in original word (w) - only for longer queries
+            else if (sq.length > 2 && wt === sq) score = 300;
+            else if (sq.length > 2 && wt.startsWith(sq)) score = 200;
+
+            // Match in transliteration (t) - only for longer queries
+            else if (sq.length > 2 && tt === sq) score = 150;
+            else if (sq.length > 2 && tt.startsWith(sq)) score = 100;
+        }
+
+        if (score > 0) {
+            matches.push({ idx: i, entry: e, score: score + (entries.length - i) * 0.000001 });
+        }
+    }
+
+    matches.sort((a, b) => b.score - a.score);
+
+    var hCount = matches.filter(function(m) { return m.entry.l === 'H'; }).length;
+    var gCount = matches.filter(function(m) { return m.entry.l === 'G'; }).length;
+    document.querySelectorAll('#langFilter button').forEach(function(b) {
+        var lang = b.dataset.lang;
+        var badge = b.querySelector('.count-badge');
+        if (lang === 'ALL') { if (badge) badge.textContent = matches.length; }
+        else if (lang === 'H') { if (badge) badge.textContent = hCount; }
+        else if (lang === 'G') { if (badge) badge.textContent = gCount; }
+    });
+
+    renderSidebar(matches);
+    if (matches.length === 1) {
+        showEntry(matches[0].idx);
+    } else if (matches.length > 0 && currentIdx !== null) {
+        const stillThere = matches.some(m => m.idx === currentIdx);
+        if (!stillThere) { currentIdx = null; entryViewEl.innerHTML = `<div class="welcome"><h2>${matches.length} resultados</h2><p class="sub">Seleccioná una entrada</p></div>`; }
+    } else {
+        currentIdx = null;
+        entryViewEl.innerHTML = `<div class="welcome"><h2>${matches.length === 0 ? 'Sin resultados' : matches.length + ' resultados'}</h2></div>`;
+    }
+}
+
+function renderSidebar(matches) {
+    if (!matches.length) { sidebarResults.innerHTML = '<div class="no-results">Sin resultados</div>'; return; }
+    let html = '';
+    for (const m of matches) {
+        const e = m.entry;
+        const active = m.idx === currentIdx ? ' active' : '';
+        const preview = e.d.slice(0, 120).replace(/\s+/g, ' ') + '…';
+        html += `<div class="match${active}" data-idx="${m.idx}">
+            <div class="word">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'H' : 'G'}</span> <span class="num-badge">${e.n}</span></div>
+            <div class="translit">${escHtml(e.t)}</div>
+            <div class="spanish">${e.s.map(s => escHtml(s)).join(', ')}</div>
+        </div>`;
+    }
+    html += '<div class="results-footer">' + matches.length + ' resultados</div>';
+    sidebarResults.innerHTML = html;
+    sidebarResults.querySelectorAll('.match').forEach(el => {
+        el.addEventListener('click', () => {
+            const idx = parseInt(el.dataset.idx);
+            if (window.innerWidth <= 700) sidebarEl.classList.add('sidebar-hidden');
+            showEntry(idx);
+        });
+    });
+}
+
+function showEntry(idx) {
+    const e = entries[idx];
+    currentIdx = idx;
+    sidebarResults.querySelectorAll('.match').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
+    });
+
+    const def = e.d.replace(/\[.*?\]/g, ' ').replace(/\s+/g, ' ').trim();
+    const saved = isFav(idx) ? ' saved' : '';
+    entryViewEl.innerHTML = `
+        <div class="entry-card">
+            <div class="entry-header">
+                <div class="word-line">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
+                <div class="translit-line">${escHtml(e.t)}</div>
+                ${e.s.length ? `<div class="spanish-line">${e.s.map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>` : ''}
+                <div class="header-meta">
+                    <span class="strong-num">Strong #${e.n}</span>
+                    <span class="page-badge">pág. ${e.p}</span>
+                    <button class="fav-btn${saved}" title="Favorito">★</button>
+                    <button class="copy-btn" title="Copiar">📋</button>
+                </div>
+            </div>
+            <div class="entry-def">${escHtml(def)}</div>
+        </div>`;
+    entryViewEl.querySelector('.entry-def').style.fontSize = fontSize + 'px';
+    entryViewEl.scrollTop = 0;
+    entryViewEl.querySelector('.fav-btn')?.addEventListener('click', () => toggleFav(idx));
+    entryViewEl.querySelector('.copy-btn')?.addEventListener('click', () => {
+        const text = `${e.w} (${e.l === 'H' ? 'Heb' : 'Gr'}. #${e.n}) — ${e.t}\n${e.s.join(', ')}\n\n${e.d}`;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = entryViewEl.querySelector('.copy-btn');
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = '📋'; }, 1500);
+        }).catch(() => {});
+    });
+}
+
+function toggleDark() {
+    isDark = !isDark;
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('strongDark', isDark);
+}
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'toggleDark') {
+        isDark = e.data.dark;
+        document.documentElement.classList.toggle('dark', isDark);
+        localStorage.setItem('strongDark', isDark);
+    }
+});
+
+function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function changeFont(delta) {
+    fontSize = Math.min(28, Math.max(12, fontSize + delta));
+    localStorage.setItem('strongFontSize', fontSize);
+    const el = entryViewEl.querySelector('.entry-def');
+    if (el) el.style.fontSize = fontSize + 'px';
+    fontSizeLabel.textContent = fontSize;
+}
+
+const letterIndex = {};
+function normChar(c) {
+    return c.normalize('NFD')[0].toUpperCase();
+}
+function buildLetterIndex() {
+    const byLetter = {};
+    for (let i = 0; i < entries.length; i++) {
+        const w = entries[i].w;
+        if (!w) continue;
+        const c = normChar(w.charAt(0));
+        if (!byLetter[c]) byLetter[c] = [];
+        byLetter[c].push(i);
+    }
+    for (const c of Object.keys(byLetter)) {
+        letterIndex[c] = byLetter[c];
+    }
+    const bar = document.getElementById('letterBar');
+    let html = '';
+    const hebrewLetters = 'אבגדהוזחטיכלמנסעפצקרשת';
+    const greekLetters = 'αβγδεζηθικλμνξοπρστυφχψω';
+    for (const c of hebrewLetters + '|' + greekLetters) {
+        if (c === '|') { html += '<span style="width:100%;height:0;border-bottom:1px solid rgba(128,128,128,0.2);margin:3px 0"></span>'; continue; }
+        const upper = c.toUpperCase();
+        if (byLetter[upper]) {
+            html += `<span class="l" data-l="${escHtml(upper)}">${escHtml(c)}<span class="cnt">${byLetter[upper].length}</span></span>`;
+        } else {
+            html += `<span class="l" style="opacity:0.2;cursor:default">${escHtml(c)}</span>`;
+        }
+    }
+    bar.innerHTML = html;
+    bar.addEventListener('click', e => {
+        const el = e.target.closest('.l');
+        if (!el || !el.dataset.l) return;
+        const letter = el.dataset.l;
+        const ids = letterIndex[letter];
+        if (!ids) return;
+        document.querySelectorAll('.letter-bar .l').forEach(l => l.classList.remove('active'));
+        el.classList.add('active');
+        let filtered = ids;
+        if (langFilter !== 'ALL') filtered = ids.filter(i => entries[i].l === langFilter);
+        const matches = filtered.map(idx => ({ idx, entry: entries[idx] }));
+        renderSidebar(matches);
+        if (matches.length > 0) showEntry(matches[0].idx);
+        currentIdx = null;
+    });
+}
+
+init();
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'search') {
+        searchEl.value = e.data.query;
+        onSearch();
+    }
+});
+</script>
+</body>
+</html>

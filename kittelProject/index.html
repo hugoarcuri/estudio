@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kittel — Diccionario Teológico del NT</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="datos.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+<style>
+:root {
+    --accent: #C8B88A;
+    --accent-dark: #B8A87A;
+    --header-bg: #2A0808;
+    --bg: #F5F2EB;
+    --sidebar-bg: #FAF8F4;
+    --sidebar-border: #E8E0C8;
+    --card-bg: #FFFFFF;
+    --text: #1C1814;
+    --text-muted: #8A8072;
+    --text-light: #B0A898;
+    --font-bar-bg: #F0ECE4;
+    --badge-bg: #F0E8D0;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+    --scrollbar-track: #F0ECE4;
+    --scrollbar-thumb: #C8B88A;
+    --griego-color: #2A0808;
+    --welcome-bg: #F5F2EB;
+}
+.dark {
+    --bg: #1C1410;
+    --sidebar-bg: #261E18;
+    --sidebar-border: #3A3228;
+    --card-bg: #2E2620;
+    --text: #E8E0C8;
+    --text-muted: #A89880;
+    --text-light: #7A7062;
+    --font-bar-bg: #2E2620;
+    --badge-bg: #3A3228;
+    --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.4);
+    --scrollbar-track: #2E2620;
+    --scrollbar-thumb: #5A5040;
+    --griego-color: #E8E0C8;
+    --welcome-bg: #1C1410;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; transition: background 0.2s, color 0.2s; }
+
+header { background: var(--header-bg); color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; }
+header .logo { height: clamp(50px, 10vw, 78px); width: auto; flex-shrink: 0; }
+header h1 { font-size: 22px; font-weight: 700; white-space: nowrap; }
+header input { flex: 0 1 320px; min-width: 140px; padding: 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; font-weight: 400; letter-spacing: -0.2px; outline: none; background: #fff; }
+header input::placeholder { color: #999; font-weight: 400; opacity: 0.7; font-size: 14px; }
+#verseRef { font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.lang-switch { display: inline-flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+.lang-switch button { background: none; border: none; color: rgba(255,255,255,0.45); font-size: 12px; font-weight: 700; padding: 5px 13px; cursor: pointer; transition: background 0.15s, color 0.15s; line-height: 1.2; }
+.lang-switch button:hover { background: rgba(255,255,255,0.08); }
+.lang-switch button.active { background: var(--accent); color: #1C1814; }
+#search.gr { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", "Galatia SIL", "Palatino Linotype", serif; font-size: 17px; }
+
+header input:focus { box-shadow: 0 0 0 3px var(--accent); }
+.header-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+
+main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+#sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: background 0.2s; }
+#sidebar .font-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--sidebar-border); background: var(--font-bar-bg); flex-shrink: 0; transition: background 0.2s; }
+#sidebar .font-bar label { font-size: 12px; color: var(--text-muted); margin-right: 2px; font-weight: 700; }
+#sidebar .font-bar .font-group { display: inline-flex; align-items: center; border: 1px solid rgba(0,0,0,0.08); border-radius: 6px; overflow: hidden; }
+.dark #sidebar .font-bar .font-group { border-color: rgba(255,255,255,0.08); }
+#sidebar .font-bar .font-group .font-btn { background: none; border: none; font-size: 15px; font-weight: 700; padding: 4px 10px; cursor: pointer; line-height: 1.3; color: var(--text-muted); transition: background 0.15s, color 0.15s; }
+#sidebar .font-bar .font-group .font-btn:hover { background: var(--accent); }
+#sidebar .font-bar .font-group .font-btn:first-child { border-right: 1px solid rgba(0,0,0,0.08); }
+.dark #sidebar .font-bar .font-group .font-btn:first-child { border-right-color: rgba(255,255,255,0.08); }
+#sidebar .font-bar .font-group .font-btn:last-child { border-left: 1px solid rgba(0,0,0,0.08); }
+.dark #sidebar .font-bar .font-group .font-btn:last-child { border-left-color: rgba(255,255,255,0.08); }
+#sidebar .font-bar #fontSizeLabel { font-size: 13px; color: var(--text-muted); min-width: 22px; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; line-height: 1; }
+#sidebar .sidebar-results { flex: 1; overflow-y: auto; }
+#sidebar .sidebar-results::-webkit-scrollbar { width: 6px; }
+#sidebar .sidebar-results::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+#sidebar .sidebar-results::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+#sidebar .match { padding: 14px 18px; border-bottom: 1px solid var(--sidebar-border); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+#sidebar .match:hover { background: #F5F0E4; }
+.dark #sidebar .match:hover { background: #322A20; }
+#sidebar .match.active { background: #F0E8D0; border-left: 4px solid var(--accent); }
+.dark #sidebar .match.active { background: #3A3220; }
+#sidebar .match .griego { font-size: 18px; font-weight: 600; color: var(--griego-color); transition: color 0.2s; }
+#sidebar .match .espanol { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+#sidebar .match .preview { font-size: 13px; color: var(--text-light); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#sidebar .no-results { padding: 40px 18px; text-align: center; color: var(--text-light); font-size: 15px; }
+#sidebar .results-footer { padding: 10px 18px; text-align: center; color: var(--text-light); font-size: 12px; border-top: 1px solid var(--sidebar-border); }
+#sidebar .letter-bar { display: flex; flex-wrap: wrap; gap: 1px; padding: 5px 10px; border-bottom: 1px solid var(--sidebar-border); background: var(--sidebar-bg); flex-shrink: 0; }
+#sidebar .letter-bar .l { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 26px; font-size: 15px; font-weight: 600; cursor: pointer; border-radius: 4px; color: var(--text-muted); transition: background 0.12s, color 0.12s; user-select: none; }
+#sidebar .letter-bar .l:hover { background: var(--accent); color: #fff; }
+#sidebar .letter-bar .l.active { background: var(--accent); color: #fff; }
+#sidebar .letter-bar .l .cnt { font-size: 8px; font-weight: 400; margin-left: 1px; opacity: 0.6; }
+
+#content { flex: 1; overflow-y: auto; min-height: 0; padding: 0; }
+
+#content::-webkit-scrollbar { width: 6px; }
+#content::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+#content::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+#entry-view { padding: 30px 40px; max-width: 1030px; margin: 0 auto; }
+#entry-view .entry-card { background: var(--card-bg); border-radius: 10px; padding: 32px 36px; box-shadow: var(--shadow); transition: box-shadow 0.2s, background 0.2s; }
+#entry-view .entry-card:hover { box-shadow: var(--shadow-lg); }
+#entry-view .entry-header { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--accent); }
+#entry-view .entry-header .griego { font-size: 28px; font-weight: 700; color: var(--griego-color); transition: color 0.2s; }
+#entry-view .entry-header .espanol { font-size: 16px; color: var(--text-muted); margin-top: 4px; }
+#entry-view .entry-header .header-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+#entry-view .entry-header .header-meta .page-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; }
+#entry-view .entry-header .header-meta .fav-btn, #entry-view .entry-header .header-meta .copy-btn, #entry-view .entry-header .header-meta .share-btn { background: none; border: 1px solid var(--sidebar-border); font-size: 12px; padding: 3px 10px; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: background 0.15s, color 0.15s; }
+#entry-view .entry-header .header-meta .fav-btn:hover, #entry-view .entry-header .header-meta .copy-btn:hover, #entry-view .entry-header .header-meta .share-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+#entry-view .entry-header .header-meta .fav-btn.saved { background: var(--accent); color: #fff; border-color: var(--accent); }
+.mobile-back { display: none; }
+#entry-view .entry-text { font-size: 18px; line-height: 1.85; color: var(--text); transition: color 0.2s; }
+#entry-view .entry-text br { content: ""; display: block; margin-top: 14px; }
+#entry-view .entry-text .greek-word { font-size: 1.15em; font-weight: 700; }
+#entry-view .entry-text .section-title { font-size: 1.1em; font-weight: 700; }
+
+.badge { display: inline-block; background: var(--badge-bg); color: var(--accent-dark); font-size: 13px; padding: 3px 10px; border-radius: 12px; margin-right: 4px; font-weight: 500; }
+
+.welcome { background: var(--welcome-bg); min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; transition: background 0.2s; }
+.welcome h2 { font-size: 30px; font-weight: 700; color: var(--griego-color); margin-bottom: 4px; transition: color 0.2s; }
+.welcome .sub { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; }
+.welcome .quick-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 500px; }
+.welcome .quick-card { background: var(--card-bg); border: 1px solid var(--sidebar-border); border-radius: 10px; padding: 10px 18px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--griego-color); transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s; box-shadow: var(--shadow); }
+.welcome .quick-card:hover { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: var(--shadow-lg); }
+
+@media (max-width: 900px) {
+    #sidebar { width: 30%; min-width: 260px; }
+    #sidebar .match { padding: 12px 14px; }
+    #sidebar .match .griego { font-size: 16px; }
+    #entry-view { padding: 20px 24px; }
+    #entry-view .entry-card { padding: 24px 24px; }
+}
+@media (max-width: 700px) {
+    body { min-height: 100vh; overflow-y: auto; padding-bottom: 48px; }
+    main { flex-direction: column; overflow: visible; }
+    #sidebar { width: 100%; min-width: unset; height: auto; max-height: 3000px; border-right: none; border-bottom: 1px solid var(--sidebar-border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; transition: max-height 0.35s ease, opacity 0.35s ease, padding 0.35s ease, border 0.35s ease, box-shadow 0.35s ease; }
+    #sidebar.sidebar-hidden { max-height: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
+    #sidebar .font-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; border-bottom: none; border-top: 1px solid var(--sidebar-border); border-radius: 0; }
+    #sidebar .sidebar-results { flex: 0 1 auto; overflow: visible; }
+    #sidebar .letter-bar { flex-shrink: 0; }
+    .mobile-back { display: none; }
+    #sidebar.sidebar-hidden ~ #content .mobile-back { display: inline-flex; align-items: center; justify-content: center; position: fixed; bottom: 56px; right: 10px; z-index: 25; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #1C1814; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); cursor: pointer; font-size: 18px; line-height: 1; transition: transform 0.15s, background 0.15s; }
+    #sidebar.sidebar-hidden ~ #content .mobile-back:hover { transform: scale(1.1); background: var(--accent-dark); }
+    #entry-view { padding: 16px; padding-bottom: 56px; }
+    #entry-view .entry-card { padding: 18px; }
+    #entry-view .entry-header .griego { font-size: 22px; }
+    #entry-view .entry-text { font-size: 17px; }
+    .welcome h2 { font-size: 24px; }
+    .welcome .quick-card { padding: 8px 14px; font-size: 12px; }
+}
+@media (max-width: 480px) {
+    header { padding: 10px 12px; gap: 8px; justify-content: center; }
+
+    header h1 { font-size: 17px; }
+    header input { padding: 10px 14px; font-size: 15px; min-width: 100px; flex: 1 1 100%; order: 3; }
+    #verseRef { font-size: 12px; flex: 0 1 auto; }
+    #sidebar .match { padding: 10px 12px; }
+    #sidebar .match .griego { font-size: 15px; }
+    #sidebar .match .espanol { font-size: 13px; }
+    #sidebar .match .preview { font-size: 12px; -webkit-line-clamp: 1; }
+    #entry-view { padding: 12px 12px 56px; }
+    #entry-view .entry-card { padding: 14px; }
+    #entry-view .entry-header .griego { font-size: 19px; }
+    #entry-view .entry-text { font-size: 15px; }
+    .welcome h2 { font-size: 20px; }
+    .welcome .sub { font-size: 14px; }
+
+}
+</style>
+</head>
+<body>
+
+<header>
+    <img class="logo" src="logo.png" alt="HAEDO">
+    <h1>Kittel</h1>
+    <input type="text" id="search" placeholder="Escribí una palabra en español…" autofocus>
+    <div class="lang-switch" id="langSwitch">
+        <button class="active" data-lang="ES">ES</button>
+        <button data-lang="GR">GR</button>
+    </div>
+    <div class="header-right">
+</header>
+
+<main>
+    <div id="sidebar">
+        <div class="font-bar">
+            <label>Tamaño</label>
+            <div class="font-group">
+                <button class="font-btn" id="fontDecr">A−</button>
+                <span id="fontSizeLabel">16</span>
+                <button class="font-btn" id="fontIncr">A+</button>
+            </div>
+        </div>
+        <div class="letter-bar" id="letterBar"></div>
+        <div class="sidebar-results">
+            <div class="no-results"></div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="entry-view"></div>
+    </div>
+</main>
+
+<script>
+let entries = [];
+let currentMatch = null;
+let fontSize = parseInt(localStorage.getItem('kittelFontSize')) || 16;
+let isDark = localStorage.getItem('kittelDark') === 'true';
+let searchLang = 'ES';
+const FAV_KEY = 'kittelFav';
+
+const GREEK_MAP = {
+    'a':'α','b':'β','g':'γ','d':'δ','e':'ε','z':'ζ','h':'η','i':'ι','k':'κ',
+    'l':'λ','m':'μ','n':'ν','x':'ξ','o':'ο','p':'π','r':'ρ','s':'σ','t':'τ',
+    'y':'υ','f':'φ','j':'θ','c':'χ','u':'υ','w':'ω','v':'β',
+    'A':'Α','B':'Β','G':'Γ','D':'Δ','E':'Ε','Z':'Ζ','H':'Η','I':'Ι','K':'Κ',
+    'L':'Λ','M':'Μ','N':'Ν','X':'Ξ','O':'Ο','P':'Π','R':'Ρ','S':'Σ','T':'Τ',
+    'Y':'Υ','F':'Φ','J':'Θ','C':'Χ','U':'Υ','W':'Ω','V':'Β'
+};
+const GREEK_DIGRAPHS = { 'th':'θ','Th':'Θ','TH':'Θ','ph':'φ','Ph':'Φ','PH':'Φ','ch':'χ','Ch':'Χ','CH':'Χ','ps':'ψ','Ps':'Ψ','PS':'Ψ' };
+function applyGreekTranslit(text) {
+    if (searchLang !== 'GR') return text;
+    let skip = false, result = '';
+    for (let i = 0; i < text.length; i++) {
+        if (skip) { skip = false; continue; }
+        const digraph = text.slice(i, i+2);
+        if (GREEK_DIGRAPHS[digraph]) { result += GREEK_DIGRAPHS[digraph]; skip = true; continue; }
+        const ch = text[i];
+        if (GREEK_MAP[ch]) { result += GREEK_MAP[ch]; continue; }
+        result += ch;
+    }
+    const words = result.split(/(\s+)/);
+    for (let i = 0; i < words.length; i++) {
+        if (words[i].endsWith('σ') && /\S/.test(words[i])) {
+            words[i] = words[i].slice(0, -1) + 'ς';
+        }
+    }
+    return words.join('');
+}
+function stripGreekAccents(s) {
+    return s.normalize('NFD').replace(/[\u0300-\u036F]/g, '');
+}
+function cleanEntryGreek(g, t) {
+    let h = g.replace(/\[.*?\]/g,'').replace(/\[[^\]]*$/g,'').replace(/\s*,\s*/g,', ').replace(/, ,/g,',').replace(/^,|,$/g,'').trim();
+    if (g.includes('[') || h.split(',').filter(Boolean).length <= 1) {
+        const extra = (t||'').replace(/\[.*?\]/g,' ').replace(/\]/g,'').trim().match(/[\u0370-\u03FF\u1F00-\u1FFF ,]+/);
+        if (extra) {
+            const tw = extra[0].split(',').map(s=>s.trim()).filter(Boolean).slice(0,3);
+            if (tw.length) h = tw.join(', ');
+        }
+    }
+    return h;
+}
+
+const searchEl = document.getElementById('search');
+const sidebarEl = document.getElementById('sidebar');
+const sidebarResults = document.querySelector('.sidebar-results');
+const fontSizeLabel = document.getElementById('fontSizeLabel');
+const entryViewEl = document.getElementById('entry-view');
+if (isDark) document.documentElement.classList.add('dark');
+fontSizeLabel.textContent = fontSize;
+
+function getFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || {}; } catch { return {}; } }
+function isFav(idx) { return !!getFavs()[idx]; }
+function toggleFav(idx) {
+    const f = getFavs();
+    if (f[idx]) { delete f[idx]; } else { f[idx] = true; }
+    saveFavs(f);
+    const btn = entryViewEl.querySelector('.fav-btn');
+    if (btn) btn.classList.toggle('saved', !!f[idx]);
+}
+
+function init() {
+    entries = KITTEL_DATA;
+    var totalTerms = entries.reduce(function(a, e) { return a + e.e.length; }, 0);
+    var grRaw = '';
+    searchEl.addEventListener('focus', function() {
+        document.getElementById('sidebar').classList.remove('sidebar-hidden');
+    });
+    searchEl.addEventListener('beforeinput', function(e) {
+        if (searchLang !== 'GR') return;
+        if (e.inputType === 'insertText' && e.data) {
+            e.preventDefault();
+            grRaw += e.data;
+            searchEl.value = applyGreekTranslit(grRaw);
+            onSearch();
+        } else if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') {
+            e.preventDefault();
+            grRaw = grRaw.slice(0, -1);
+            searchEl.value = applyGreekTranslit(grRaw);
+            onSearch();
+        } else if (e.inputType === 'insertFromPaste' && e.data) {
+            e.preventDefault();
+            grRaw += e.data;
+            searchEl.value = applyGreekTranslit(grRaw);
+            onSearch();
+        }
+    });
+    searchEl.addEventListener('input', function() {
+        if (searchLang === 'GR' && grRaw) return;
+        document.getElementById('sidebar').classList.remove('sidebar-hidden');
+        onSearch();
+    });
+    buildLetterIndex();
+    if (searchEl.value) onSearch(); else showWelcome();
+    document.querySelectorAll('.font-btn').forEach(function(btn) {
+        if (btn.id === 'fontIncr') btn.addEventListener('click', function() { changeFont(2); });
+        if (btn.id === 'fontDecr') btn.addEventListener('click', function() { changeFont(-2); });
+    });
+    var langBtns = document.querySelectorAll('#langSwitch button');
+    langBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            searchLang = btn.dataset.lang;
+            langBtns.forEach(function(b) { b.classList.toggle('active', b === btn); });
+            searchEl.classList.toggle('gr', searchLang === 'GR');
+            searchEl.placeholder = searchLang === 'ES' ? 'Escribi una palabra en espanol...' : 'Escribi una palabra en griego...';
+            grRaw = '';
+            searchEl.value = '';
+            document.getElementById('sidebar').classList.remove('sidebar-hidden');
+            searchEl.focus();
+            onSearch();
+        });
+    });
+}
+
+function showWelcome() {
+    const cards = ['Amor', 'Fe', 'Gracia', 'Misericordia', 'Justicia', 'Reino', 'Espíritu'];
+    entryViewEl.innerHTML = `<div class="welcome">
+        <h2>Diccionario Teológico del Nuevo Testamento</h2>
+        <p class="sub">Basado en el Compendio de Kittel</p>
+        <div class="quick-grid">${cards.map(w => `<div class="quick-card" data-w="${w}">${w}</div>`).join('')}</div>
+    </div>`;
+    entryViewEl.querySelectorAll('.quick-card').forEach(el => {
+        el.addEventListener('click', () => {
+            searchEl.value = el.dataset.w;
+            grRaw = '';
+            document.getElementById('sidebar').classList.remove('sidebar-hidden');
+            onSearch();
+        });
+    });
+}
+
+function onSearch() {
+    const q = searchEl.value.toLowerCase().trim();
+    if (!q) {
+        sidebarResults.innerHTML = '<div class="no-results"></div>';
+        showWelcome();
+        currentMatch = null;
+        return;
+    }
+    const isGr = searchLang === 'GR';
+    document.querySelectorAll('.letter-bar .l').forEach(l => l.classList.remove('active'));
+    const matches = [];
+    const sq = stripGreekAccents(q);
+    for (let i = 0; i < entries.length; i++) {
+        const e = entries[i];
+        const fields = [e.g, ...e.e];
+        let bestScore = 0;
+        for (const s of fields) {
+            const testStr = stripGreekAccents(s.toLowerCase());
+            if (isGr) {
+                if (testStr === sq) bestScore = Math.max(bestScore, 1000);
+                else if (testStr.startsWith(sq)) bestScore = Math.max(bestScore, 800);
+                else if (testStr.includes(sq)) bestScore = Math.max(bestScore, 600);
+            } else {
+                const re = new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
+                if (re.test(testStr)) bestScore = Math.max(bestScore, 500);
+            }
+        }
+        if (bestScore > 0) {
+            matches.push({ idx: i, entry: e, score: bestScore + (entries.length - i) * 0.000001 });
+        }
+    }
+    matches.sort(function(a, b) { return b.score - a.score; });
+    renderSidebar(matches);
+    if (matches.length === 1) {
+        showEntry(matches[0].idx);
+    } else if (matches.length > 0 && currentMatch !== null) {
+        const stillThere = matches.some(m => m.idx === currentMatch);
+        if (!stillThere) {
+            currentMatch = null;
+            entryViewEl.innerHTML = `<div class="welcome"><h2>${matches.length} resultados</h2><p class="sub">Seleccioná una entrada de la lista</p></div>`;
+        }
+    } else {
+        currentMatch = null;
+        entryViewEl.innerHTML = `<div class="welcome"><h2>${matches.length === 0 ? 'Sin resultados' : matches.length + ' resultados'}</h2></div>`;
+    }
+}
+
+function renderSidebar(matches) {
+    if (matches.length === 0) {
+        sidebarResults.innerHTML = '<div class="no-results">Sin resultados</div>';
+        return;
+    }
+    let html = '';
+    for (let m of matches) {
+        const e = m.entry;
+        const active = m.idx === currentMatch ? ' active' : '';
+        const preview = e.t.slice(0, 150).replace(/\s+/g, ' ') + '…';
+        html += `<div class="match${active}" data-idx="${m.idx}">
+            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}</div>
+            <div class="espanol">${e.e.map(s => escHtml(s)).join(', ')}</div>
+            <div class="preview">${((e.g + ' ' + e.t).replace(/\[.*?\]/g,' ').replace(/\[[^\]]*$/g,'').replace(/, ,/g, ', ').replace(/\s+/g, ' ').trim()).slice(0, 150)}…</div>
+        </div>`;
+    }
+    html += '<div class="results-footer">' + matches.length + ' resultados</div>';
+    sidebarResults.innerHTML = html;
+    sidebarResults.querySelectorAll('.match').forEach(el => {
+        el.addEventListener('click', () => {
+            const idx = parseInt(el.dataset.idx);
+            if (window.innerWidth <= 700) document.getElementById('sidebar').classList.add('sidebar-hidden');
+            showEntry(idx);
+        });
+    });
+}
+
+function showEntry(idx) {
+    const e = entries[idx];
+    currentMatch = idx;
+    sidebarResults.querySelectorAll('.match').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
+    });
+    const fullEntry = (e.g + ' ' + e.t).replace(/\[.*?\]/g,' ').replace(/\[[^\]]*$/g,'').replace(/, ,/g, ',').replace(/,\s*$/, '').replace(/\s+,/g, ',').trim();
+    let text = fullEntry
+        .replace(/\s+(A\.|B\.|C\.|D\.|E\.|F\.|G\.)\s/g, '<br><br><span class="section-title">$1</span> ')
+        .replace(/\s+(\d+\.)\s/g, '<br><br><span class="section-title">$1</span> ');
+    text = text.replace(/([\u0370-\u03FF\u1F00-\u1FFF]{2,}(?:\s*[\u0370-\u03FF\u1F00-\u1FFF]+)*)/g, '<span class="greek-word">$1</span>');
+    const saved = isFav(idx) ? ' saved' : '';
+    const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(e.e[0] || '')}`;
+    entryViewEl.innerHTML = `
+        <div class="entry-card">
+            <div class="entry-header">
+            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}</div>
+                <div class="espanol">${e.e.map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>
+                <div class="header-meta">
+                    <span class="page-badge">Kittel pág. ${e.p || '—'}</span>
+                    <button class="mobile-back">←</button>
+                    <button class="fav-btn${saved}" data-idx="${idx}" title="Favorito">★</button>
+                    <button class="copy-btn" data-idx="${idx}" title="Copiar entrada">📋</button>
+                    <button class="share-btn" data-share="${escHtml(shareUrl)}" title="Compartir">🔗</button>
+                </div>
+            </div>
+            <div class="entry-text">${text}</div>
+        </div>`;
+    entryViewEl.querySelector('.entry-text').style.fontSize = fontSize + 'px';
+    entryViewEl.scrollTop = 0;
+    entryViewEl.querySelector('.fav-btn')?.addEventListener('click', () => toggleFav(idx));
+    entryViewEl.querySelector('.copy-btn')?.addEventListener('click', () => {
+        const plain = fullEntry;
+        navigator.clipboard.writeText(plain).then(() => {
+            const btn = entryViewEl.querySelector('.copy-btn');
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = '📋'; }, 1500);
+        }).catch(() => {});
+    });
+    entryViewEl.querySelector('.share-btn')?.addEventListener('click', () => {
+        const url = entryViewEl.querySelector('.share-btn').dataset.share;
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = entryViewEl.querySelector('.share-btn');
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = '🔗'; }, 1500);
+        }).catch(() => {});
+    });
+    entryViewEl.querySelector('.mobile-back')?.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('sidebar-hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        searchEl.focus();
+    });
+}
+
+function toggleDark() {
+    isDark = !isDark;
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('kittelDark', isDark);
+}
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'toggleDark') {
+        isDark = e.data.dark;
+        document.documentElement.classList.toggle('dark', isDark);
+        localStorage.setItem('kittelDark', isDark);
+    }
+});
+
+function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function changeFont(delta) {
+    fontSize = Math.min(28, Math.max(12, fontSize + delta));
+    localStorage.setItem('kittelFontSize', fontSize);
+    const el = entryViewEl.querySelector('.entry-text');
+    if (el) el.style.fontSize = fontSize + 'px';
+    fontSizeLabel.textContent = fontSize;
+}
+
+const letterIndex = {};
+function normGreek(c) {
+    const base = c.normalize('NFD')[0];
+    return base.toUpperCase();
+}
+function buildLetterIndex() {
+    const byLetter = {};
+    for (let i = 0; i < entries.length; i++) {
+        const greek = entries[i].g.replace(/\[.*$/, '').split(',')[0].trim();
+        if (!greek) continue;
+        const c = normGreek(greek.charAt(0));
+        if (!byLetter[c]) byLetter[c] = [];
+        byLetter[c].push(i);
+    }
+    for (const c of Object.keys(byLetter)) {
+        letterIndex[c] = byLetter[c];
+    }
+    const bar = document.getElementById('letterBar');
+    let html = '';
+    for (const c of 'αβγδεζηθικλμνξοπρστυφχψω') {
+        const upper = c.toUpperCase();
+        if (byLetter[upper]) {
+            html += `<span class="l" data-l="${escHtml(upper)}">${escHtml(c)}<span class="cnt">${byLetter[upper].length}</span></span>`;
+        } else {
+            html += `<span class="l" style="opacity:0.2;cursor:default">${escHtml(c)}</span>`;
+        }
+    }
+    bar.innerHTML = html;
+    bar.addEventListener('click', e => {
+        const el = e.target.closest('.l');
+        if (!el || !el.dataset.l) return;
+        const letter = el.dataset.l;
+        const ids = letterIndex[letter];
+        if (!ids) return;
+        document.querySelectorAll('.letter-bar .l').forEach(l => l.classList.remove('active'));
+        el.classList.add('active');
+        const matches = ids.map(idx => ({ idx, entry: entries[idx] }));
+        renderSidebar(matches);
+        if (matches.length > 0) showEntry(matches[0].idx);
+        currentMatch = null;
+    });
+}
+
+init();
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'search') {
+        searchEl.value = e.data.query;
+        grRaw = '';
+        onSearch();
+    }
+});
+</script>
+</body>
+</html>
