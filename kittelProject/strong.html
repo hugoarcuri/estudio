@@ -102,6 +102,11 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #sidebar .letter-bar .l:hover { background: var(--accent); color: #fff; }
 #sidebar .letter-bar .l.active { background: var(--accent); color: #fff; }
 #sidebar .letter-bar .l .cnt { font-size: 8px; font-weight: 400; margin-left: 1px; opacity: 0.6; }
+#letterSelect { display: none; }
+@media (max-width: 700px) {
+    #sidebar .letter-bar { display: none; }
+    #letterSelect { display: block; width: calc(100% - 20px); margin: 6px 10px; padding: 6px 8px; font-size: 14px; border: 1px solid var(--sidebar-border); border-radius: 6px; background: var(--card-bg); color: var(--text); flex-shrink: 0; }
+}
 #content { flex: 1; overflow-y: auto; min-height: 0; padding: 0; }
 #content::-webkit-scrollbar { width: 6px; }
 #content::-webkit-scrollbar-track { background: var(--scrollbar-track); }
@@ -181,6 +186,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             </div>
         </div>
         <div class="letter-bar" id="letterBar"></div>
+        <select id="letterSelect"><option value="">— Letra —</option></select>
         <div class="sidebar-results">
             <div class="no-results"></div>
         </div>
@@ -455,21 +461,40 @@ function buildLetterIndex() {
         }
     }
     bar.innerHTML = html;
-    bar.addEventListener('click', e => {
+    bar.addEventListener('click', function(e) {
         const el = e.target.closest('.l');
         if (!el || !el.dataset.l) return;
-        const letter = el.dataset.l;
-        const ids = letterIndex[letter];
-        if (!ids) return;
-        document.querySelectorAll('.letter-bar .l').forEach(l => l.classList.remove('active'));
-        el.classList.add('active');
-        let filtered = ids;
-        if (langFilter !== 'ALL') filtered = ids.filter(i => entries[i].l === langFilter);
-        const matches = filtered.map(idx => ({ idx, entry: entries[idx] }));
-        renderSidebar(matches);
-        if (matches.length > 0) showEntry(matches[0].idx);
-        currentIdx = null;
+        filterByLetter(el.dataset.l);
     });
+    var sel = document.getElementById('letterSelect');
+    sel.innerHTML = '<option value="">— Letra —</option>';
+    var allLetters = 'אבגדהוזחטיכלמנסעפצקרשת|αβγδεζηθικλμνξοπρστυφχψω';
+    for (const c of allLetters) {
+        if (c === '|') continue;
+        const upper = c.toUpperCase();
+        var opt = document.createElement('option');
+        opt.value = upper;
+        opt.textContent = c + (byLetter[upper] ? ' (' + byLetter[upper].length + ')' : '');
+        sel.appendChild(opt);
+    }
+    sel.addEventListener('change', function() {
+        if (!this.value) return;
+        filterByLetter(this.value);
+    });
+}
+function filterByLetter(letter) {
+    const ids = letterIndex[letter];
+    if (!ids) return;
+    document.querySelectorAll('.letter-bar .l').forEach(function(l) { l.classList.remove('active'); });
+    var el = document.querySelector('.letter-bar .l[data-l="' + letter + '"]');
+    if (el) el.classList.add('active');
+    let filtered = ids;
+    if (langFilter !== 'ALL') filtered = ids.filter(function(i) { return entries[i].l === langFilter; });
+    const matches = filtered.map(function(idx) { return { idx: idx, entry: entries[idx] }; });
+    renderSidebar(matches);
+    if (matches.length > 0) showEntry(matches[0].idx);
+    currentIdx = null;
+}
 }
 
 init();
