@@ -122,6 +122,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #content::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 /* SECTION: entrada */
 #entry-view { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
+#sidebar.sidebar-hidden ~ #content #entry-view { max-width: none; }
 /* SECTION: responsive */
 #entry-view .entry-card { background: var(--card-bg); border-radius: 10px; padding: 28px 32px; box-shadow: var(--shadow); }
 #entry-view .entry-card:hover { box-shadow: var(--shadow-lg); }
