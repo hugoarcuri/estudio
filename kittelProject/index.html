@@ -193,7 +193,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             <label>Tamaño</label>
             <div class="font-group">
                 <button class="font-btn" id="fontDecr">A−</button>
-                <span id="fontSizeLabel">16</span>
+                <span id="fontSizeLabel">14</span>
                 <button class="font-btn" id="fontIncr">A+</button>
             </div>
         </div>
@@ -210,7 +210,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 <script>
 let entries = [];
 let currentMatch = null;
-let fontSize = parseInt(localStorage.getItem('kittelFontSize')) || 16;
+let fontSize = parseInt(localStorage.getItem('kittelFontSize')) || 14;
 let isDark = localStorage.getItem('kittelDark') === 'true';
 let searchLang = 'ES';
 const FAV_KEY = 'kittelFav';

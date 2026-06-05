@@ -165,7 +165,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             <label>Tamaño</label>
             <div class="font-group">
                 <button class="font-btn" id="fontDecr">A−</button>
-                <span id="fontSizeLabel">16</span>
+                <span id="fontSizeLabel">14</span>
                 <button class="font-btn" id="fontIncr">A+</button>
             </div>
         </div>
@@ -182,7 +182,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 <script>
 let entries = [];
 let currentIdx = null;
-let fontSize = parseInt(localStorage.getItem('strongFontSize')) || 16;
+let fontSize = parseInt(localStorage.getItem('strongFontSize')) || 14;
 let isDark = localStorage.getItem('strongDark') === 'true';
 let langFilter = 'ALL';
 const FAV_KEY = 'strongFav';
