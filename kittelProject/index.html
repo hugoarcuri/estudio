@@ -397,17 +397,11 @@ function onSearch() {
     }
     matches.sort(function(a, b) { return b.score - a.score; });
     renderSidebar(matches);
-    if (matches.length === 1) {
+    if (matches.length > 0) {
         showEntry(matches[0].idx);
-    } else if (matches.length > 0 && currentMatch !== null) {
-        const stillThere = matches.some(m => m.idx === currentMatch);
-        if (!stillThere) {
-            currentMatch = null;
-            entryViewEl.innerHTML = `<div class="welcome"><h2>${matches.length} resultados</h2><p class="sub">Seleccioná una entrada de la lista</p></div>`;
-        }
     } else {
         currentMatch = null;
-        entryViewEl.innerHTML = `<div class="welcome"><h2>${matches.length === 0 ? 'Sin resultados' : matches.length + ' resultados'}</h2></div>`;
+        entryViewEl.innerHTML = `<div class="welcome"><h2>Sin resultados</h2></div>`;
     }
 }
 
