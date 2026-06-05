@@ -111,7 +111,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #letterPopup .l:hover { background: var(--accent); color: #fff; }
 #letterPopup .l.active { background: var(--accent); color: #fff; }
 #letterPopup .l .cnt { font-size: 8px; font-weight: 400; margin-left: 1px; opacity: 0.6; }
-#sidebar { position: relative; }
+#sidebar .font-bar { position: relative; }
 
 #content { flex: 1; overflow-y: auto; min-height: 0; padding: 0; }
 
@@ -219,9 +219,9 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
                 <button class="font-btn" id="fontIncr">A+</button>
             </div>
             <button id="letterToggle" title="Letras">αβ</button>
+            <div class="letter-popup" id="letterPopup"></div>
         </div>
         <div class="letter-bar" id="letterBar"></div>
-        <div class="letter-popup" id="letterPopup"></div>
         <div class="sidebar-results">
             <div class="no-results"></div>
         </div>
