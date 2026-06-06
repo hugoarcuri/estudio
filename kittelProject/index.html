@@ -70,40 +70,27 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 .header-right .font-group .font-btn:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
 .header-right .font-group .font-btn:last-child { border-left: 1px solid rgba(255,255,255,0.2); }
 .header-right #fontSizeLabel { font-size: 13px; color: rgba(255,255,255,0.7); min-width: 22px; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; line-height: 1; }
-.header-right #letterToggle { background: none; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; font-size: 13px; padding: 4px 8px; cursor: pointer; line-height: 1.3; color: rgba(255,255,255,0.7); transition: background 0.15s, color 0.15s; font-family: "SBL Hebrew", "Gentium Plus", serif; }
-.header-right #letterToggle:hover { background: rgba(255,255,255,0.12); }
 
 main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 
 /* SECTION: sidebar */
 #sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: background 0.2s; }
+#sidebar .results-header { padding: 10px 14px 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); flex-shrink: 0; text-align: center; }
+#sidebar .results-header .results-count { font-weight: 400; color: var(--text-light); margin-left: 4px; }
 #sidebar .sidebar-results { flex: 1; overflow-y: auto; }
 #sidebar .sidebar-results::-webkit-scrollbar { width: 6px; }
 #sidebar .sidebar-results::-webkit-scrollbar-track { background: var(--scrollbar-track); }
 #sidebar .sidebar-results::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
-#sidebar .match { padding: 10px 14px; border-bottom: 1px solid var(--sidebar-border); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+#sidebar .match { padding: 7px 14px; border-bottom: 1px solid var(--sidebar-border); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
 #sidebar .match:hover { background: #F5F0E4; }
 .dark #sidebar .match:hover { background: #322A20; }
 #sidebar .match.active { background: #F0E8D0; border-left: 4px solid var(--accent); }
 .dark #sidebar .match.active { background: #3A3220; }
-#sidebar .match .griego { font-size: 15px; font-weight: 600; color: var(--griego-color); transition: color 0.2s; }
-#sidebar .match .espanol { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-#sidebar .match .preview { font-size: 12px; color: var(--text-light); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#sidebar .match .griego { font-size: 14px; font-weight: 600; color: var(--griego-color); transition: color 0.2s; }
+#sidebar .match .espanol { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+#sidebar .match .preview { font-size: 11px; color: var(--text-light); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 #sidebar .no-results { padding: 40px 18px; text-align: center; color: var(--text-light); font-size: 15px; }
 #sidebar .results-footer { padding: 10px 18px; text-align: center; color: var(--text-light); font-size: 12px; border-top: 1px solid var(--sidebar-border); }
-#sidebar .letter-bar { display: flex; flex-direction: column; gap: 1px; padding: 5px 10px; border-bottom: 1px solid var(--sidebar-border); background: var(--sidebar-bg); flex-shrink: 0; max-height: 250px; opacity: 1; overflow-y: auto; transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.4s ease, border 0.4s ease; scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
-#sidebar .letter-bar.collapsed { max-height: 0; padding: 0 10px; opacity: 0; border-bottom-color: transparent; }
-#sidebar .letter-bar .l { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 26px; font-size: 15px; font-weight: 600; cursor: pointer; border-radius: 4px; color: var(--text-muted); transition: background 0.12s, color 0.12s; user-select: none; }
-#sidebar .letter-bar .l:hover { background: var(--accent); color: #fff; }
-#sidebar .letter-bar .l.active { background: var(--accent); color: #fff; }
-#sidebar .letter-bar .l .cnt { font-size: 8px; font-weight: 400; margin-left: 1px; opacity: 0.6; }
-#letterPopup { visibility: hidden; display: flex; position: absolute; z-index: 100; top: 0; left: 10px; right: 10px; background: var(--card-bg); border: 1px solid var(--sidebar-border); border-radius: 8px; box-shadow: var(--shadow-lg); padding: 8px; max-height: 200px; overflow-y: auto; flex-wrap: wrap; gap: 2px; align-content: flex-start; pointer-events: none; }
-#letterPopup.open { visibility: visible; pointer-events: auto; }
-#letterPopup .l { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; font-size: 16px; font-weight: 600; cursor: pointer; border-radius: 4px; color: var(--text-muted); transition: background 0.12s, color 0.12s; user-select: none; }
-#letterPopup .l:hover { background: var(--accent); color: #fff; }
-#letterPopup .l.active { background: var(--accent); color: #fff; }
-#letterPopup .l .cnt { font-size: 8px; font-weight: 400; margin-left: 1px; opacity: 0.6; }
-#sidebar { position: relative; }
 
 #content { flex: 1; overflow-y: auto; min-height: 0; padding: 0; }
 
@@ -140,7 +127,6 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 .welcome .quick-card:hover { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: var(--shadow-lg); }
 
 @media (max-width: 900px) {
-    #sidebar { width: 30%; min-width: 260px; }
     #sidebar .match { padding: 9px 12px; }
     #sidebar .match .griego { font-size: 14px; }
     #entry-view { padding: 20px 24px; }
@@ -152,7 +138,6 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     #sidebar { width: 100%; min-width: unset; height: auto; max-height: 3000px; border-right: none; border-bottom: 1px solid var(--sidebar-border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; transition: max-height 0.35s ease, opacity 0.35s ease, padding 0.35s ease, border 0.35s ease, box-shadow 0.35s ease; }
     #sidebar.sidebar-hidden { max-height: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
     #sidebar .sidebar-results { flex: 0 1 auto; overflow: visible; }
-    #sidebar .letter-bar { flex-shrink: 0; flex-direction: row; flex-wrap: wrap; max-height: none; overflow: visible; }
     .mobile-back { display: none; }
     #sidebar.sidebar-hidden ~ #content .mobile-back { display: inline-flex; align-items: center; justify-content: center; position: fixed; bottom: 56px; right: 10px; z-index: 25; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #1C1814; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); cursor: pointer; font-size: 18px; line-height: 1; transition: transform 0.15s, background 0.15s; }
     #sidebar.sidebar-hidden ~ #content .mobile-back:hover { transform: scale(1.1); background: var(--accent-dark); }
@@ -200,7 +185,6 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             <span id="fontSizeLabel">14</span>
             <button class="font-btn" id="fontIncr">A+</button>
         </div>
-        <button id="letterToggle" title="Letras">αβ</button>
     </div>
 </header>
 
@@ -208,9 +192,8 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 <main>
     <!-- SECTION: sidebar -->
     <div id="sidebar">
-        <div class="letter-popup" id="letterPopup"></div>
-        <div class="letter-bar" id="letterBar"></div>
         <div class="sidebar-results">
+            <div class="results-header">Resultados de Búsqueda</div>
             <div class="no-results"></div>
         </div>
     </div>
@@ -324,7 +307,6 @@ function init() {
         document.getElementById('sidebar').classList.remove('sidebar-hidden');
         onSearch();
     });
-    buildLetterIndex();
     if (searchEl.value) onSearch(); else showWelcome();
     document.querySelectorAll('.font-btn').forEach(function(btn) {
         if (btn.id === 'fontIncr') btn.addEventListener('click', function() { changeFont(2); });
@@ -374,7 +356,6 @@ function onSearch() {
         return;
     }
     const isGr = searchLang === 'GR';
-    document.querySelectorAll('.letter-bar .l').forEach(l => l.classList.remove('active'));
     const matches = [];
     const sq = stripGreekAccents(q);
     for (let i = 0; i < entries.length; i++) {
@@ -409,10 +390,10 @@ function onSearch() {
 /* SECTION: render-sidebar */
 function renderSidebar(matches) {
     if (matches.length === 0) {
-        sidebarResults.innerHTML = '<div class="no-results">Sin resultados</div>';
+        sidebarResults.innerHTML = '<div class="results-header">Resultados de Búsqueda</div><div class="no-results">Sin resultados</div>';
         return;
     }
-    let html = '';
+    let html = '<div class="results-header">Resultados de Búsqueda <span class="results-count">' + matches.length + '</span></div>';
     for (let m of matches) {
         const e = m.entry;
         const active = m.idx === currentMatch ? ' active' : '';
@@ -428,9 +409,10 @@ function renderSidebar(matches) {
     sidebarResults.querySelectorAll('.match').forEach(el => {
         el.addEventListener('click', () => {
             const idx = parseInt(el.dataset.idx);
-            if (window.innerWidth <= 700) document.getElementById('sidebar').classList.add('sidebar-hidden');
+            if (window.innerWidth <= 700) {
+                document.getElementById('sidebar').classList.add('sidebar-hidden');
+            }
             showEntry(idx);
-            document.getElementById('letterBar').classList.add('collapsed');
         });
     });
 }
@@ -518,72 +500,6 @@ function changeFont(delta) {
     fontSizeLabel.textContent = fontSize;
 }
 
-const letterIndex = {};
-function normGreek(c) {
-    const base = c.normalize('NFD')[0];
-    return base.toUpperCase();
-}
-function buildLetterIndex() {
-    const byLetter = {};
-    for (let i = 0; i < entries.length; i++) {
-        const greek = entries[i].g.replace(/\[.*$/, '').split(',')[0].trim();
-        if (!greek) continue;
-        const c = normGreek(greek.charAt(0));
-        if (!byLetter[c]) byLetter[c] = [];
-        byLetter[c].push(i);
-    }
-    for (const c of Object.keys(byLetter)) {
-        letterIndex[c] = byLetter[c];
-    }
-    const bar = document.getElementById('letterBar');
-    let html = '';
-    for (const c of 'αβγδεζηθικλμνξοπρστυφχψω') {
-        const upper = c.toUpperCase();
-        if (byLetter[upper]) {
-            html += `<span class="l" data-l="${escHtml(upper)}">${escHtml(c)}<span class="cnt">${byLetter[upper].length}</span></span>`;
-        } else {
-            html += `<span class="l" style="opacity:0.2;cursor:default">${escHtml(c)}</span>`;
-        }
-    }
-    bar.innerHTML = html;
-    bar.addEventListener('click', e => {
-        const el = e.target.closest('.l');
-        if (!el || !el.dataset.l) return;
-        const letter = el.dataset.l;
-        const ids = letterIndex[letter];
-        if (!ids) return;
-        document.querySelectorAll('.letter-bar .l').forEach(l => l.classList.remove('active'));
-        el.classList.add('active');
-        const matches = ids.map(idx => ({ idx, entry: entries[idx] }));
-        renderSidebar(matches);
-        if (matches.length > 0) showEntry(matches[0].idx);
-        currentMatch = null;
-        bar.classList.add('collapsed');
-    });
-    var popup = document.getElementById('letterPopup');
-    popup.innerHTML = html;
-    popup.addEventListener('click', e => {
-        var el2 = e.target.closest('.l');
-        if (!el2 || !el2.dataset.l) return;
-        bar.querySelectorAll('.l').forEach(function(l) { l.classList.remove('active'); });
-        var match = bar.querySelector('.l[data-l="' + el2.dataset.l + '"]');
-        if (match) match.classList.add('active');
-        popup.classList.remove('open');
-        var letter = el2.dataset.l;
-        var ids = letterIndex[letter];
-        if (!ids) return;
-        var matches = ids.map(function(idx) { return { idx: idx, entry: entries[idx] }; });
-        renderSidebar(matches);
-        if (matches.length > 0) showEntry(matches[0].idx);
-        currentMatch = null;
-    });
-    document.getElementById('letterToggle').addEventListener('click', function(e) {
-        e.stopPropagation();
-        popup.classList.toggle('open');
-    });
-    document.addEventListener('click', function() { popup.classList.remove('open'); });
-    popup.addEventListener('click', function(e) { e.stopPropagation(); });
-}
 
 init();
 
