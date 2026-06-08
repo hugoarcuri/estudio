@@ -192,23 +192,25 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     .welcome h2 { font-size: 24px; }
     .welcome .quick-card { padding: 8px 14px; font-size: 12px; }
 }
-@media (max-width: 480px) {
-    header { padding: 10px 12px; gap: 8px; justify-content: center; }
-
-    header h1 { font-size: 17px; }
-    header input { padding: 10px 14px; font-size: 15px; min-width: 100px; flex: 1 1 100%; order: 3; }
-    #verseRef { font-size: 12px; flex: 0 1 auto; }
-    #sidebar .match { padding: 8px 10px; }
-    #sidebar .match .griego { font-size: 13px; }
-    #sidebar .match .espanol { font-size: 12px; }
-    #sidebar .match .preview { font-size: 11px; -webkit-line-clamp: 1; }
-    #entry-view { padding: 12px 12px 56px; }
-    #entry-view .entry-card { padding: 14px; }
-    #entry-view .entry-header .griego { font-size: 19px; }
-    #entry-view .entry-text { font-size: 15px; }
-    .welcome h2 { font-size: 20px; }
-    .welcome .sub { font-size: 14px; }
-
+@media (max-width: 450px) {
+    header { padding: 6px 8px; gap: 4px; flex-wrap: nowrap; }
+    header .logo { height: 28px; }
+    header h1 { display: none; }
+    header input { padding: 6px 10px; font-size: 13px; min-width: 60px; flex: 1; order: unset; }
+    header input::placeholder { font-size: 11px; }
+    #verseRef { display: none; }
+    #langFilter { order: unset; }
+    .header-right { order: unset; gap: 4px; margin-left: 0; }
+    .header-right .font-group .font-btn { padding: 2px 6px; font-size: 12px; }
+    .header-right #fontSizeLabel { min-width: 16px; font-size: 11px; }
+    #sidebar .match { padding: 6px 8px; }
+    #sidebar .match .griego { font-size: 12px; }
+    #sidebar .match .espanol { font-size: 11px; }
+    #sidebar .match .preview { font-size: 10px; -webkit-line-clamp: 1; }
+    #entry-view { padding: 10px 10px 48px; }
+    #entry-view .entry-card { padding: 12px; }
+    #entry-view .entry-header .griego { font-size: 17px; }
+    #entry-view .entry-text { font-size: 14px; }
 }
 </style>
 </head>

@@ -169,12 +169,28 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     #langFilter { order: 3; }
     .header-right { order: 4; }
     main { flex-direction: column; overflow: visible; }
-    #sidebar { width: 100%; min-width: unset; height: auto; max-height: 50vh; border-right: none; border-bottom: 1px solid var(--sidebar-border); overflow-y: auto; }
+    #sidebar { width: 100%; min-width: unset; height: auto; max-height: 50vh; border-right: none; border-bottom: 1px solid var(--sidebar-border); overflow: hidden; transition: max-height 0.35s ease, opacity 0.35s ease, padding 0.35s ease, border 0.35s ease; }
+    #sidebar.sidebar-hidden { max-height: 0 !important; padding: 0 !important; border: none !important; opacity: 0 !important; }
+    #sidebar .sidebar-results { flex: 0 1 auto; overflow: visible; }
+    .mobile-back { display: none; }
+    #sidebar.sidebar-hidden ~ #content .mobile-back { display: inline-flex; align-items: center; justify-content: center; position: fixed; bottom: 56px; right: 10px; z-index: 25; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); cursor: pointer; font-size: 20px; line-height: 1; transition: transform 0.15s, background 0.15s; }
+    #sidebar.sidebar-hidden ~ #content .mobile-back:hover { transform: scale(1.1); background: var(--accent-dark); }
 
     #entry-view { padding: 16px; }
     #entry-view .entry-card { padding: 18px; }
     #entry-view .entry-header .word-line { font-size: 22px; }
     #entry-view .entry-def { font-size: 16px; }
+}
+@media (max-width: 450px) {
+    header { flex-wrap: nowrap; gap: 4px; padding: 6px 8px; }
+    header .logo { height: 28px; }
+    header h1 { display: none; }
+    header input { flex: 1; min-width: 60px; padding: 6px 10px; font-size: 13px; order: unset; }
+    header input::placeholder { font-size: 11px; }
+    #langFilter { order: unset; }
+    .header-right { order: unset; margin-left: 0; gap: 4px; }
+    .header-right .font-group .font-btn { padding: 2px 6px; font-size: 12px; }
+    .header-right #fontSizeLabel { min-width: 16px; font-size: 11px; }
 }
 </style>
 </head>
@@ -226,6 +242,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
             </div>
         </div>
         <div id="entry-view"></div>
+        <button class="mobile-back" id="mobileBack">←</button>
     </div>
 </main>
 
@@ -281,6 +298,9 @@ function init() {
             document.querySelectorAll('#langFilter button').forEach(function(b) { b.classList.toggle('active', b === btn); });
             onSearch();
         });
+    });
+    document.getElementById('mobileBack')?.addEventListener('click', function() {
+        sidebarEl.classList.remove('sidebar-hidden');
     });
 }
 
