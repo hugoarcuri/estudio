@@ -57,8 +57,8 @@ header h1 { font-size: 22px; font-weight: 700; white-space: nowrap; }
 header input { padding: 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", system-ui, sans-serif; outline: none; background: #fff; }
 header input::placeholder { color: #999; font-size: 14px; }
 header input:focus { box-shadow: 0 0 0 3px var(--accent); }
-#langFilter { display: flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-#langFilter button { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 700; padding: 5px 12px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+#langFilter { display: flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; overflow: hidden; flex-shrink: 0; align-self: center; }
+#langFilter button { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500; font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; padding: 4px 12px; cursor: pointer; transition: background 0.15s, color 0.15s; line-height: 1.4; letter-spacing: 0.3px; text-transform: uppercase; }
 #langFilter button:hover { background: rgba(255,255,255,0.12); }
 #langFilter button.active { background: var(--accent); color: #fff; }
 .count-badge { display: inline-block; background: rgba(255,255,255,0.15); border-radius: 6px; padding: 0 5px; font-size: 10px; margin-left: 2px; line-height: 1.4; }
@@ -73,8 +73,8 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 
 #search.hebrew { font-family: "SBL Hebrew", "Times New Roman", serif; font-size: 18px; }
 #search.greek { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", serif; font-size: 17px; }
-.search-wrap { position: relative; flex: 1 1 500px; min-width: 130px; }
-.search-wrap input { width: 100%; padding: 10px 44px 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", system-ui, sans-serif; outline: none; background: #fff; }
+.search-wrap { position: relative; flex: 1 1 500px; min-width: 130px; display: flex; align-items: center; gap: 8px; }
+.search-wrap input { flex: 1; min-width: 0; padding: 10px 44px 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", system-ui, sans-serif; outline: none; background: #fff; }
 .search-wrap .menu-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #bbb; font-size: 18px; padding: 4px 6px; cursor: pointer; line-height: 1; border-radius: 6px; transition: color 0.15s, background 0.15s; }
 .search-wrap .menu-btn:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
 /* SECTION: index-panel */
@@ -169,8 +169,8 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     header { gap: 8px; padding: 8px 12px; }
     header .logo { height: clamp(44px, 8vw, 60px); }
     header h1 { font-size: 17px; }
-    .search-wrap { flex: 1 1 100%; min-width: 0; }
-    #langFilter { display: flex; flex: 0 0 100%; justify-content: center; border: none; gap: 6px; margin-top: 4px; }
+    .search-wrap { flex: 1 1 100%; min-width: 0; flex-wrap: wrap; }
+    #langFilter { border: none; gap: 4px; }
     #langFilter button { border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 3px 14px; }
     main { flex-direction: column; overflow: visible; }
     #sidebar { width: 100%; min-width: unset; height: auto; max-height: 50vh; border-right: none; border-bottom: 1px solid var(--sidebar-border); overflow: hidden; transition: max-height 0.35s ease, opacity 0.35s ease, padding 0.35s ease, border 0.35s ease; }
@@ -189,12 +189,12 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     header { gap: 4px; padding: 6px 8px; }
     header .logo { height: 100%; max-height: 44px; width: auto; }
     header h1 { display: none; }
-    .search-wrap { flex: 1; min-width: 60px; }
+    .search-wrap { flex: 1; min-width: 60px; gap: 4px; }
     .search-wrap input { padding: 6px 10px; font-size: 13px; }
     .search-wrap input::placeholder { font-size: 11px; }
-    .search-wrap .menu-btn { font-size: 15px; padding: 2px 4px; }
-    #langFilter { margin-top: 2px; gap: 4px; }
-    #langFilter button { font-size: 10px; padding: 2px 10px; }
+    .search-wrap .menu-btn { padding: 2px 4px; }
+    .search-wrap .menu-btn svg { width: 14px; height: 14px; }
+    #langFilter button { font-size: 10px; padding: 2px 8px; }
 }
 </style>
 </head>
@@ -206,12 +206,12 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     <h1>Strong</h1>
     <div class="search-wrap">
         <input type="text" id="search" placeholder="Buscar por palabra española, Strong, hebreo o griego…" autofocus>
-        <button class="menu-btn" id="menuBtn">☰</button>
-    </div>
-    <div id="langFilter">
-        <button class="active" data-lang="ALL">TODOS <span class="count-badge"></span></button>
-        <button data-lang="H">H <span class="count-badge"></span></button>
-        <button data-lang="G">G <span class="count-badge"></span></button>
+        <button class="menu-btn" id="menuBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <div id="langFilter">
+            <button class="active" data-lang="ALL">TODOS <span class="count-badge"></span></button>
+            <button data-lang="H">H <span class="count-badge"></span></button>
+            <button data-lang="G">G <span class="count-badge"></span></button>
+        </div>
     </div>
 </header>
 
