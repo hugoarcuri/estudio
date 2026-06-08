@@ -137,6 +137,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #entry-view .entry-card:hover { box-shadow: var(--shadow-lg); }
 #entry-view .entry-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
 #entry-view .entry-header .word-line { font-size: 26px; font-weight: 700; }
+#entry-view .entry-header .word-line .word-trans { font-size: 20px; font-weight: 400; color: var(--text-muted); margin-left: 10px; font-style: italic; }
 #entry-view .entry-header .word-line .lang-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 8px; color: #fff; vertical-align: middle; }
 #entry-view .entry-header .word-line .lang-badge.H { background: var(--badge-h); }
 #entry-view .entry-header .word-line .lang-badge.G { background: var(--badge-g); }
@@ -381,7 +382,7 @@ function renderSidebar(matches) {
         const active = m.idx === currentIdx ? ' active' : '';
         const preview = e.d.slice(0, 120).replace(/\s+/g, ' ') + '…';
         html += `<div class="match${active}" data-idx="${m.idx}">
-            <div class="word"><span class="lang-badge ${e.l}">${e.l === 'H' ? 'H' : 'G'}</span> <span class="num-badge">#${e.n}</span></div>
+            <div class="word">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'H' : 'G'}</span> <span class="num-badge">#${e.n}</span></div>
             <div class="translit">${escHtml(e.t)}</div>
             <div class="spanish">${e.s.map(s => escHtml(s)).join(', ')}</div>
         </div>`;
@@ -412,9 +413,9 @@ function showEntry(idx) {
     entryViewEl.innerHTML = `
         <div class="entry-card">
             <div class="entry-header">
-                <div class="word-line">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
+                <div class="word-line">${escHtml(e.w)} <span class="word-trans">${escHtml(e.s[0] || '')}</span> <span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
                 <div class="translit-line">${escHtml(e.t)}</div>
-                ${e.s.length ? `<div class="spanish-line">${e.s.map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>` : ''}
+                ${e.s.length > 1 ? `<div class="spanish-line">${e.s.slice(1).map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>` : ''}
                 <div class="header-meta">
                     <span class="strong-num">Strong #${e.n}</span>
                     <span class="page-badge">pág. ${e.p}</span>
