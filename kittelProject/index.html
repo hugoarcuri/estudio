@@ -549,11 +549,6 @@ function onSearch() {
     const isGr = searchLang === 'GR';
     const matches = [];
     const sq = stripGreekAccents(q);
-    var debugInfo = 'q=|' + q + '| sq=|' + sq + '| entries=' + entries.length + ' gr=' + isGr;
-    console.log('Kittel search:', debugInfo, 'total fields/entry', entries[0] ? Object.keys(entries[0]).join(',') : 'N/A');
-    if (!isGr) {
-        debugInfo += ' ascii=' + /^[\x00-\x7F]+$/.test(sq);
-    }
     for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
         const fields = [e.g, ...e.e];
@@ -585,7 +580,7 @@ function onSearch() {
         showEntry(matches[0].idx);
     } else {
         currentMatch = null;
-        entryViewEl.innerHTML = `<div class="welcome"><h2>Sin resultados</h2><p style="font-size:13px;color:var(--text-muted);margin-top:8px;">${debugInfo}</p></div>`;
+        entryViewEl.innerHTML = `<div class="welcome"><h2>Sin resultados</h2></div>`;
     }
 }
 
