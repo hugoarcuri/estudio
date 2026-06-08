@@ -363,10 +363,18 @@ function getStrongNum(g) {
     var found = strongNumByGreek[key];
     return found ? { n: found.n, l: found.l } : null;
 }
+var strongToKittelIdx = {};
 /* SECTION: init */
 function init() {
     entries = KITTEL_DATA; /* SECTION: datos-cargados */
     buildWordIndex();
+    for (var _s2 = 0; _s2 < entries.length; _s2++) {
+        var _sn2 = getStrongNum(entries[_s2].g);
+        if (_sn2) {
+            if (!strongToKittelIdx[_sn2.n]) strongToKittelIdx[_sn2.n] = [];
+            strongToKittelIdx[_sn2.n].push(_s2);
+        }
+    }
     var totalTerms = entries.reduce(function(a, e) { return a + e.e.length; }, 0);
     var grRaw = '';
     searchEl.addEventListener('focus', function() {
@@ -549,6 +557,24 @@ function onSearch() {
     const isGr = searchLang === 'GR';
     const matches = [];
     const sq = stripGreekAccents(q);
+    var strongSearch = /^[gh]?\d{1,5}$/i.test(q);
+    if (strongSearch) {
+        var snum = parseInt(q.replace(/^[gh]/i, ''), 10);
+        var sidx = strongToKittelIdx[snum];
+        if (sidx) {
+            for (var _si4 = 0; _si4 < sidx.length; _si4++) {
+                matches.push({ idx: sidx[_si4], entry: entries[sidx[_si4]], score: 2000 + (entries.length - sidx[_si4]) * 0.000001 });
+            }
+        }
+        renderSidebar(matches);
+        if (matches.length > 0) {
+            showEntry(matches[0].idx);
+        } else {
+            currentMatch = null;
+            entryViewEl.innerHTML = '<div class="welcome"><h2>Sin resultados</h2><p style="font-size:14px;color:var(--text-muted);margin-top:6px;">No se encontró el número de Strong ' + snum + '</p></div>';
+        }
+        return;
+    }
     for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
         const fields = [e.g, ...e.e];
