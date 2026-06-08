@@ -53,7 +53,7 @@ body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display"
 header { background: var(--header-bg); color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; }
 header .logo { height: clamp(50px, 10vw, 78px); width: auto; flex-shrink: 0; }
 header h1 { font-size: 22px; font-weight: 700; white-space: nowrap; }
-header input { flex: 0 1 320px; min-width: 140px; padding: 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; font-weight: 400; letter-spacing: -0.2px; outline: none; background: #fff; }
+header input { padding: 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; font-weight: 400; letter-spacing: -0.2px; outline: none; background: #fff; }
 header input::placeholder { color: #999; font-weight: 400; opacity: 0.7; font-size: 14px; }
 #verseRef { font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
 .lang-switch { display: inline-flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
@@ -63,12 +63,14 @@ header input::placeholder { color: #999; font-weight: 400; opacity: 0.7; font-si
 #search.gr { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", "Galatia SIL", "Palatino Linotype", serif; font-size: 17px; }
 
 header input:focus { box-shadow: 0 0 0 3px var(--accent); }
-.menu-btn { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); font-size: 20px; padding: 4px 10px; border-radius: 8px; cursor: pointer; line-height: 1; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
-.menu-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.search-wrap { position: relative; flex: 0 1 320px; min-width: 140px; }
+.search-wrap input { width: 100%; padding: 10px 44px 10px 16px; border: none; border-radius: 10px; font-size: 16px; font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; font-weight: 400; letter-spacing: -0.2px; outline: none; background: #fff; }
+.search-wrap .menu-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #bbb; font-size: 18px; padding: 4px 6px; cursor: pointer; line-height: 1; border-radius: 6px; transition: color 0.15s, background 0.15s; }
+.search-wrap .menu-btn:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
 .header-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
 .font-bar { background: #1C0E0A; padding: 4px 20px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); }
 .font-bar .font-group { display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; }
-.font-bar .font-group .font-btn { background: none; border: none; font-size: 13px; font-weight: 700; padding: 3px 8px; cursor: pointer; line-height: 1.3; color: rgba(255,255,255,0.6); transition: background 0.15s; }
+.font-bar .font-group .font-btn { background: none; border: none; font-size: 16px; font-weight: 700; padding: 5px 12px; cursor: pointer; line-height: 1.3; color: rgba(255,255,255,0.6); transition: background 0.15s; }
 .font-bar .font-group .font-btn:hover { background: rgba(255,255,255,0.12); }
 .font-bar .font-group .font-btn:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
 .font-bar .font-group .font-btn:last-child { border-left: 1px solid rgba(255,255,255,0.2); }
@@ -83,11 +85,24 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 .index-panel .panel-header h2 { font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
 .index-panel .panel-header .panel-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 6px; line-height: 1; }
 .index-panel .panel-header .panel-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.index-panel .panel-search { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.index-panel .panel-header .back-btn { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 6px; line-height: 1; display: none; margin-right: 4px; }
+.index-panel .panel-header .back-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.index-panel .panel-header .back-btn.show { display: inline-block; }
+.index-panel .letter-grid.hide { display: none; }
+.index-panel .letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 6px; padding: 20px; flex: 1; align-content: start; overflow-y: auto; }
+.index-panel .letter-grid .lg-item { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 56px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: background 0.15s, border-color 0.15s; user-select: none; }
+.index-panel .letter-grid .lg-item:hover { background: var(--accent); border-color: var(--accent); }
+.index-panel .letter-grid .lg-item .lg-char { font-size: 18px; font-weight: 700; color: #E8E0C8; line-height: 1.2; }
+.index-panel .letter-grid .lg-item .lg-count { font-size: 10px; color: rgba(255,255,255,0.35); }
+.index-panel .letter-grid .lg-item:hover .lg-char { color: #fff; }
+.index-panel .letter-grid .lg-item:hover .lg-count { color: rgba(255,255,255,0.7); }
+.index-panel .panel-search { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; display: none; }
+.index-panel .panel-search.show { display: block; }
 .index-panel .panel-search input { width: 100%; padding: 8px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: rgba(255,255,255,0.06); color: #E8E0C8; transition: border-color 0.2s; }
 .index-panel .panel-search input::placeholder { color: rgba(255,255,255,0.3); }
 .index-panel .panel-search input:focus { border-color: var(--accent); }
-.index-panel .panel-words { flex: 1; overflow-y: auto; padding: 8px 0; }
+.index-panel .panel-words { flex: 1; overflow-y: auto; padding: 8px 0; display: none; }
+.index-panel .panel-words.show { display: block; }
 .index-panel .panel-words::-webkit-scrollbar { width: 5px; }
 .index-panel .panel-words::-webkit-scrollbar-track { background: transparent; }
 .index-panel .panel-words::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
@@ -201,8 +216,10 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 <header>
     <img class="logo" src="logo.png" alt="HAEDO">
     <h1>Kittel</h1>
-    <input type="text" id="search" placeholder="Escribí una palabra en español…" autofocus>
-    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="search-wrap">
+        <input type="text" id="search" placeholder="Escribí una palabra en español…" autofocus>
+        <button class="menu-btn" id="menuBtn">☰</button>
+    </div>
     <div class="lang-switch" id="langSwitch">
         <button class="active" data-lang="ES">ES</button>
         <button data-lang="GR">GR</button>
@@ -219,12 +236,14 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 <div class="index-overlay" id="indexOverlay"></div>
 <div class="index-panel" id="indexPanel">
     <div class="panel-header">
-        <h2>Índice de palabras</h2>
+        <button class="back-btn" id="indexBack">←</button>
+        <h2 id="panelTitle">Índice de palabras</h2>
         <button class="panel-close" id="panelClose">✕</button>
     </div>
-    <div class="panel-search">
+    <div class="panel-search" id="panelSearch">
         <input type="text" id="indexSearch" placeholder="Filtrar palabras…">
     </div>
+    <div class="letter-grid" id="letterGrid"></div>
     <div class="panel-words" id="panelWords"></div>
 </div>
 
@@ -371,6 +390,7 @@ function init() {
 
 /* SECTION: word-index */
 const wordIndexData = {};
+let currentLetter = null;
 
 function buildWordIndex() {
     const groups = {};
@@ -389,24 +409,54 @@ function buildWordIndex() {
         groups[k].sort((a, b) => a.word.localeCompare(b.word, 'es'));
         wordIndexData[k] = groups[k];
     }
-    renderWordIndex('');
 }
 
-function renderWordIndex(filter) {
-    const wordsEl = document.getElementById('panelWords');
+function showLetters() {
+    currentLetter = null;
+    document.getElementById('letterGrid').classList.remove('hide');
+    document.getElementById('panelWords').classList.remove('show');
+    document.getElementById('panelSearch').classList.remove('show');
+    document.getElementById('indexBack').classList.remove('show');
+    document.getElementById('panelTitle').textContent = 'Índice de palabras';
+    document.getElementById('indexSearch').value = '';
+    document.getElementById('indexSearch').blur();
+
+    const grid = document.getElementById('letterGrid');
     const sorted = Object.keys(wordIndexData).sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b, 'es'));
+    grid.innerHTML = sorted.map(l => `
+        <div class="lg-item" data-l="${l}">
+            <span class="lg-char">${l}</span>
+            <span class="lg-count">${wordIndexData[l].length}</span>
+        </div>
+    `).join('');
+    grid.querySelectorAll('.lg-item').forEach(el => {
+        el.addEventListener('click', function() {
+            showWordsFor(this.dataset.l);
+        });
+    });
+}
+
+function showWordsFor(letter) {
+    currentLetter = letter;
+    document.getElementById('letterGrid').classList.add('hide');
+    document.getElementById('panelSearch').classList.add('show');
+    document.getElementById('panelWords').classList.add('show');
+    document.getElementById('indexBack').classList.add('show');
+    document.getElementById('panelTitle').textContent = letter;
+    document.getElementById('indexSearch').value = '';
+    document.getElementById('indexSearch').focus();
+    renderWordsFor(letter, '');
+}
+
+function renderWordsFor(letter, filter) {
+    const wordsEl = document.getElementById('panelWords');
+    let items = wordIndexData[letter] || [];
+    const f = filter ? stripAccents(filter.toLowerCase()) : '';
+    if (f) items = items.filter(item => stripAccents(item.word.toLowerCase()).includes(f));
 
     let html = '';
-    const f = filter ? stripAccents(filter.toLowerCase()) : '';
-    for (const l of sorted) {
-        let items = wordIndexData[l];
-        if (f) items = items.filter(item => stripAccents(item.word.toLowerCase()).includes(f));
-        if (!items.length) continue;
-        html += `<div class="pw-group"><div class="pw-letter">${l}</div>`;
-        for (const item of items) {
-            html += `<div class="pw-item" data-idx="${item.idx}">${escHtml(item.word)} <span class="pw-count">${wordIndexData[l].length}</span></div>`;
-        }
-        html += '</div>';
+    for (const item of items) {
+        html += `<div class="pw-item" data-idx="${item.idx}">${escHtml(item.word)}</div>`;
     }
     wordsEl.innerHTML = html || '<div class="pw-empty">Sin resultados</div>';
 
@@ -425,9 +475,7 @@ function renderWordIndex(filter) {
 function openIndex() {
     document.getElementById('indexOverlay').classList.add('open');
     document.getElementById('indexPanel').classList.add('open');
-    document.getElementById('indexSearch').value = '';
-    renderWordIndex('');
-    document.getElementById('indexSearch').focus();
+    showLetters();
 }
 function closeIndex() {
     document.getElementById('indexOverlay').classList.remove('open');
@@ -437,8 +485,9 @@ function closeIndex() {
 document.getElementById('menuBtn').addEventListener('click', openIndex);
 document.getElementById('indexOverlay').addEventListener('click', closeIndex);
 document.getElementById('panelClose').addEventListener('click', closeIndex);
+document.getElementById('indexBack').addEventListener('click', showLetters);
 document.getElementById('indexSearch').addEventListener('input', function() {
-    renderWordIndex(this.value);
+    if (currentLetter) renderWordsFor(currentLetter, this.value);
 });
 
 /* SECTION: welcome */
