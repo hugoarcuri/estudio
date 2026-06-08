@@ -337,7 +337,7 @@ function renderSidebar(matches) {
         const active = m.idx === currentIdx ? ' active' : '';
         const preview = e.d.slice(0, 120).replace(/\s+/g, ' ') + '…';
         html += `<div class="match${active}" data-idx="${m.idx}">
-            <div class="word">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'H' : 'G'}</span> <span class="num-badge">${e.n}</span></div>
+            <div class="word"><span class="lang-badge ${e.l}">${e.l === 'H' ? 'H' : 'G'}</span> <span class="num-badge">#${e.n}</span></div>
             <div class="translit">${escHtml(e.t)}</div>
             <div class="spanish">${e.s.map(s => escHtml(s)).join(', ')}</div>
         </div>`;
@@ -368,7 +368,7 @@ function showEntry(idx) {
     entryViewEl.innerHTML = `
         <div class="entry-card">
             <div class="entry-header">
-                <div class="word-line">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
+                <div class="word-line"><span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
                 <div class="translit-line">${escHtml(e.t)}</div>
                 ${e.s.length ? `<div class="spanish-line">${e.s.map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>` : ''}
                 <div class="header-meta">
@@ -384,7 +384,7 @@ function showEntry(idx) {
     entryViewEl.scrollTop = 0;
     entryViewEl.querySelector('.fav-btn')?.addEventListener('click', () => toggleFav(idx));
     entryViewEl.querySelector('.copy-btn')?.addEventListener('click', () => {
-        const text = `${e.w} (${e.l === 'H' ? 'Heb' : 'Gr'}. #${e.n}) — ${e.t}\n${e.s.join(', ')}\n\n${e.d}`;
+        const text = `${e.l === 'H' ? 'Heb' : 'Gr'}. #${e.n} — ${e.t}\n${e.s.join(', ')}\n\n${e.d}`;
         navigator.clipboard.writeText(text).then(() => {
             const btn = entryViewEl.querySelector('.copy-btn');
             btn.textContent = '✓';

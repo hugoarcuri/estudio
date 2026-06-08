@@ -399,9 +399,7 @@ function renderSidebar(matches) {
         const active = m.idx === currentMatch ? ' active' : '';
         const preview = e.t.slice(0, 150).replace(/\s+/g, ' ') + '…';
         html += `<div class="match${active}" data-idx="${m.idx}">
-            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}</div>
             <div class="espanol">${e.e.map(s => escHtml(s)).join(', ')}</div>
-            <div class="preview">${((e.g + ' ' + e.t).replace(/\[.*?\]/g,' ').replace(/\[[^\]]*$/g,'').replace(/, ,/g, ', ').replace(/\s+/g, ' ').trim()).slice(0, 150)}…</div>
         </div>`;
     }
     html += '<div class="results-footer">' + matches.length + ' resultados</div>';
@@ -424,17 +422,15 @@ function showEntry(idx) {
     sidebarResults.querySelectorAll('.match').forEach(el => {
         el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
     });
-    const fullEntry = (e.g + ' ' + e.t).replace(/\[.*?\]/g,' ').replace(/\[[^\]]*$/g,'').replace(/, ,/g, ',').replace(/,\s*$/, '').replace(/\s+,/g, ',').trim();
+    const fullEntry = e.t.replace(/\[.*?\]/g,' ').replace(/\[[^\]]*$/g,'').replace(/, ,/g, ',').replace(/,\s*$/, '').replace(/\s+,/g, ',').trim();
     let text = fullEntry
         .replace(/\s+(A\.|B\.|C\.|D\.|E\.|F\.|G\.)\s/g, '<br><br><span class="section-title">$1</span> ')
         .replace(/\s+(\d+\.)\s/g, '<br><br><span class="section-title">$1</span> ');
-    text = text.replace(/([\u0370-\u03FF\u1F00-\u1FFF]{2,}(?:\s*[\u0370-\u03FF\u1F00-\u1FFF]+)*)/g, '<span class="greek-word">$1</span>');
     const saved = isFav(idx) ? ' saved' : '';
     const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(e.e[0] || '')}`;
     entryViewEl.innerHTML = `
         <div class="entry-card">
             <div class="entry-header">
-            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}</div>
                 <div class="espanol">${e.e.map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>
                 <div class="header-meta">
                     <span class="page-badge">Kittel pág. ${e.p || '—'}</span>
