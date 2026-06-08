@@ -68,13 +68,14 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 .search-wrap .menu-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #bbb; font-size: 18px; padding: 4px 6px; cursor: pointer; line-height: 1; border-radius: 6px; transition: color 0.15s, background 0.15s; }
 .search-wrap .menu-btn:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
 .header-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
-.font-bar { padding: 8px 20px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; justify-content: center; border-bottom: 1px solid var(--border); }
-.font-bar .font-group { display: inline-flex; align-items: center; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.font-bar .font-group .font-btn { background: #fff; border: none; font-size: 16px; font-weight: 700; padding: 5px 14px; cursor: pointer; line-height: 1.3; color: #888; transition: background 0.15s, color 0.15s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3); }
-.font-bar .font-group .font-btn:hover { background: #f5f2eb; color: #1C1814; }
-.font-bar .font-group .font-btn:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
-.font-bar .font-group .font-btn:last-child { border-left: 1px solid rgba(255,255,255,0.2); }
-.font-bar #fontSizeLabel { font-size: 12px; color: #999; min-width: 20px; text-align: center; font-weight: 600; background: #fff; display: flex; align-items: center; justify-content: center; }
+.font-bar { padding: 6px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; justify-content: center; border-bottom: 1px solid var(--border); }
+.font-bar .font-group { display: inline-flex; align-items: center; background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.05); overflow: hidden; }
+.font-bar .font-group .font-btn { background: transparent; border: none; font-size: 15px; font-weight: 600; padding: 7px 16px; cursor: pointer; line-height: 1; color: var(--text-muted); transition: all 0.15s; letter-spacing: 0.3px; }
+.font-bar .font-group .font-btn:hover { background: var(--accent); color: #fff; }
+.font-bar .font-group .font-btn:active { transform: scale(0.94); }
+.font-bar .font-group .font-btn:first-child { border-right: 1px solid var(--sidebar-border); }
+.font-bar .font-group .font-btn:last-child { border-left: 1px solid var(--sidebar-border); }
+.font-bar #fontSizeLabel { font-size: 11px; color: var(--text-muted); min-width: 22px; text-align: center; font-weight: 700; letter-spacing: 0.5px; user-select: none; }
 
 /* SECTION: index-panel */
 .index-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
