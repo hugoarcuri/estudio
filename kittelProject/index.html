@@ -6,6 +6,7 @@
 <title>Kittel — Diccionario Teológico del NT</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <script src="datos.js"></script>
+<script src="datos_strong.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
 <style>
 /* SECTION: variables-colores */
@@ -148,6 +149,8 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #entry-view .entry-header { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--accent); }
 #entry-view .entry-header .word-line { font-size: 28px; font-weight: 700; color: var(--griego-color); transition: color 0.2s; }
 #entry-view .entry-header .word-line .word-trans { font-size: 22px; font-weight: 400; color: var(--text-muted); margin-left: 12px; font-style: italic; }
+#entry-view .entry-header .word-line .strong-num-badge { display: inline-block; background: var(--header-bg); color: #fff; font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 10px; margin-left: 10px; vertical-align: middle; }
+#sidebar .match .strong-num-badge { display: inline-block; background: var(--badge-bg); color: var(--text-muted); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 6px; margin-left: 4px; }
 #entry-view .entry-header .espanol { font-size: 16px; color: var(--text-muted); margin-top: 4px; }
 #entry-view .entry-header .header-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 #entry-view .entry-header .header-meta .page-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; }
@@ -343,6 +346,23 @@ function toggleFav(idx) {
     if (btn) btn.classList.toggle('saved', !!f[idx]);
 }
 
+/* SECTION: strong-lookup */
+var strongNumByGreek = {};
+if (typeof STRONG_DATA !== 'undefined') {
+    for (var _si = 0; _si < STRONG_DATA.length; _si++) {
+        var _sw = STRONG_DATA[_si].w;
+        if (_sw) {
+            var _key = stripGreekAccents(_sw.toLowerCase());
+            if (!strongNumByGreek[_key]) strongNumByGreek[_key] = STRONG_DATA[_si];
+        }
+    }
+}
+function getStrongNum(g) {
+    var primary = g.replace(/\[.*?\]/g,'').split(',')[0].trim();
+    var key = stripGreekAccents(primary.toLowerCase());
+    var found = strongNumByGreek[key];
+    return found ? { n: found.n, l: found.l } : null;
+}
 /* SECTION: init */
 function init() {
     entries = KITTEL_DATA; /* SECTION: datos-cargados */
@@ -529,6 +549,11 @@ function onSearch() {
     const isGr = searchLang === 'GR';
     const matches = [];
     const sq = stripGreekAccents(q);
+    var debugInfo = 'q=|' + q + '| sq=|' + sq + '| entries=' + entries.length + ' gr=' + isGr;
+    console.log('Kittel search:', debugInfo, 'total fields/entry', entries[0] ? Object.keys(entries[0]).join(',') : 'N/A');
+    if (!isGr) {
+        debugInfo += ' ascii=' + /^[\x00-\x7F]+$/.test(sq);
+    }
     for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
         const fields = [e.g, ...e.e];
@@ -540,8 +565,14 @@ function onSearch() {
                 else if (testStr.startsWith(sq)) bestScore = Math.max(bestScore, 800);
                 else if (testStr.includes(sq)) bestScore = Math.max(bestScore, 600);
             } else {
-                const re = new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
-                if (re.test(testStr)) bestScore = Math.max(bestScore, 500);
+                var escSq = sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                var onlyAscii = /^[\x00-\x7F]+$/.test(escSq);
+                if (onlyAscii) {
+                    var re = new RegExp('\\b' + escSq + '\\b');
+                    if (re.test(testStr)) bestScore = Math.max(bestScore, 500);
+                } else {
+                    if (testStr.includes(sq)) bestScore = Math.max(bestScore, 500);
+                }
             }
         }
         if (bestScore > 0) {
@@ -554,7 +585,7 @@ function onSearch() {
         showEntry(matches[0].idx);
     } else {
         currentMatch = null;
-        entryViewEl.innerHTML = `<div class="welcome"><h2>Sin resultados</h2></div>`;
+        entryViewEl.innerHTML = `<div class="welcome"><h2>Sin resultados</h2><p style="font-size:13px;color:var(--text-muted);margin-top:8px;">${debugInfo}</p></div>`;
     }
 }
 
@@ -569,8 +600,10 @@ function renderSidebar(matches) {
         const e = m.entry;
         const active = m.idx === currentMatch ? ' active' : '';
         const preview = e.t.slice(0, 150).replace(/\s+/g, ' ') + '…';
+        var snum = getStrongNum(e.g);
+        var snumHtml = snum ? ' <span class="strong-num-badge">#' + snum.n + '</span>' : '';
         html += `<div class="match${active}" data-idx="${m.idx}">
-            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}</div>
+            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}${snumHtml}</div>
             <div class="espanol">${e.e.map(s => escHtml(s)).join(', ')}</div>
         </div>`;
     }
@@ -599,11 +632,13 @@ function showEntry(idx) {
         .replace(/\s+(A\.|B\.|C\.|D\.|E\.|F\.|G\.)\s/g, '<br><br><span class="section-title">$1</span> ')
         .replace(/\s+(\d+\.)\s/g, '<br><br><span class="section-title">$1</span> ');
     const saved = isFav(idx) ? ' saved' : '';
+    var snum = getStrongNum(e.g);
+    var snumHtml = snum ? ' <span class="strong-num-badge">' + (snum.l === 'H' ? 'H' : 'G') + snum.n + '</span>' : '';
     const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(e.e[0] || '')}`;
     entryViewEl.innerHTML = `
         <div class="entry-card">
             <div class="entry-header">
-                <div class="word-line">${escHtml(cleanEntryGreek(e.g, e.t))} <span class="word-trans">${escHtml(e.e[0] || '')}</span></div>
+                <div class="word-line">${escHtml(cleanEntryGreek(e.g, e.t))} <span class="word-trans">${escHtml(e.e[0] || '')}</span>${snumHtml}</div>
                 ${e.e.length > 1 ? `<div class="espanol">${e.e.slice(1).map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>` : ''}
                 <div class="header-meta">
                     <span class="page-badge">Kittel pág. ${e.p || '—'}</span>

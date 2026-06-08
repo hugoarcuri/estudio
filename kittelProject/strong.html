@@ -357,7 +357,7 @@ function onSearch() {
             // Match in synonyms (s)
             if (st.some(s => s === sq)) score = 1000;
             else if (sq.length > 2 && st.some(s => s.startsWith(sq))) score = 800;
-            else if (sq.length > 2 && st.some(s => new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(s))) score = 600;
+            else if (sq.length > 2 && st.some(s => /[^\x00-\x7F]/.test(sq) ? s.includes(sq) : new RegExp('\\b' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(s))) score = 600;
 
             // Match in Strong number (n)
             else if (nt === sq) score = 600;
