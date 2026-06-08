@@ -63,15 +63,41 @@ header input:focus { box-shadow: 0 0 0 3px var(--accent); }
 #langFilter button:hover { background: rgba(255,255,255,0.12); }
 #langFilter button.active { background: var(--accent); color: #fff; }
 .count-badge { display: inline-block; background: rgba(255,255,255,0.15); border-radius: 6px; padding: 0 5px; font-size: 10px; margin-left: 2px; line-height: 1.4; }
-.header-right .font-group { display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; overflow: hidden; }
-.header-right .font-group .font-btn { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 700; padding: 4px 10px; cursor: pointer; line-height: 1.3; }
-.header-right .font-group .font-btn:hover { background: rgba(255,255,255,0.12); }
-.header-right .font-group .font-btn:first-child { border-right: 1px solid rgba(255,255,255,0.25); }
-.header-right .font-group .font-btn:last-child { border-left: 1px solid rgba(255,255,255,0.25); }
-.header-right #fontSizeLabel { font-size: 13px; color: rgba(255,255,255,0.7); min-width: 22px; text-align: center; font-weight: 600; }
+.font-bar { background: #010101; padding: 4px 20px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); }
+.font-bar .font-group { display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; }
+.font-bar .font-group .font-btn { background: none; border: none; font-size: 13px; font-weight: 700; padding: 3px 8px; cursor: pointer; line-height: 1.3; color: rgba(255,255,255,0.6); transition: background 0.15s; }
+.font-bar .font-group .font-btn:hover { background: rgba(255,255,255,0.12); }
+.font-bar .font-group .font-btn:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
+.font-bar .font-group .font-btn:last-child { border-left: 1px solid rgba(255,255,255,0.2); }
+.font-bar #fontSizeLabel { font-size: 12px; color: rgba(255,255,255,0.6); min-width: 20px; text-align: center; font-weight: 600; }
 
 #search.hebrew { font-family: "SBL Hebrew", "Times New Roman", serif; font-size: 18px; }
 #search.greek { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", serif; font-size: 17px; }
+.menu-btn { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); font-size: 20px; padding: 4px 10px; border-radius: 8px; cursor: pointer; line-height: 1; transition: background 0.15s; flex-shrink: 0; }
+.menu-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+/* SECTION: index-panel */
+.index-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.index-overlay.open { opacity: 1; pointer-events: auto; }
+.index-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 90vw; background: #010101; z-index: 201; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); display: flex; flex-direction: column; color: #E8E0C8; }
+.index-panel.open { transform: translateX(0); }
+.index-panel .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.index-panel .panel-header h2 { font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
+.index-panel .panel-header .panel-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 6px; line-height: 1; }
+.index-panel .panel-header .panel-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.index-panel .panel-search { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.index-panel .panel-search input { width: 100%; padding: 8px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; background: rgba(255,255,255,0.06); color: #E8E0C8; transition: border-color 0.2s; }
+.index-panel .panel-search input::placeholder { color: rgba(255,255,255,0.3); }
+.index-panel .panel-search input:focus { border-color: var(--accent); }
+.index-panel .panel-words { flex: 1; overflow-y: auto; padding: 8px 0; }
+.index-panel .panel-words::-webkit-scrollbar { width: 5px; }
+.index-panel .panel-words::-webkit-scrollbar-track { background: transparent; }
+.index-panel .panel-words::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+.index-panel .pw-group { margin-bottom: 4px; }
+.index-panel .pw-group .pw-letter { padding: 6px 20px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); background: rgba(255,255,255,0.03); }
+.index-panel .pw-item { display: flex; align-items: center; gap: 8px; padding: 5px 20px; cursor: pointer; transition: background 0.12s; font-size: 13px; color: rgba(255,255,255,0.7); }
+.index-panel .pw-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.index-panel .pw-item .pw-count { font-size: 10px; color: rgba(255,255,255,0.25); margin-left: auto; }
+.index-panel .pw-empty { padding: 30px 20px; text-align: center; color: rgba(255,255,255,0.3); font-size: 13px; }
 main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 /* SECTION: sidebar */
 #sidebar { width: 23%; min-width: 200px; max-width: 400px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; overflow: hidden; transition: width 0.3s ease, opacity 0.3s ease, min-width 0.3s ease, padding 0.3s ease, border 0.3s ease, background 0.2s; }
@@ -155,19 +181,32 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     <img class="logo" src="logo_strong.png" alt="Strong">
     <h1>Strong</h1>
     <input type="text" id="search" placeholder="Buscar por palabra española, Strong, hebreo o griego…" autofocus>
+    <button class="menu-btn" id="menuBtn">☰</button>
     <div id="langFilter">
         <button class="active" data-lang="ALL">TODOS <span class="count-badge"></span></button>
         <button data-lang="H">H <span class="count-badge"></span></button>
         <button data-lang="G">G <span class="count-badge"></span></button>
     </div>
-    <div class="header-right">
-        <div class="font-group">
-            <button class="font-btn" id="fontDecr">A−</button>
-            <span id="fontSizeLabel">14</span>
-            <button class="font-btn" id="fontIncr">A+</button>
-        </div>
-    </div>
 </header>
+<div class="font-bar">
+    <div class="font-group">
+        <button class="font-btn" id="fontDecr">A−</button>
+        <span id="fontSizeLabel">14</span>
+        <button class="font-btn" id="fontIncr">A+</button>
+    </div>
+</div>
+
+<div class="index-overlay" id="indexOverlay"></div>
+<div class="index-panel" id="indexPanel">
+    <div class="panel-header">
+        <h2>Índice de palabras</h2>
+        <button class="panel-close" id="panelClose">✕</button>
+    </div>
+    <div class="panel-search">
+        <input type="text" id="indexSearch" placeholder="Filtrar palabras…">
+    </div>
+    <div class="panel-words" id="panelWords"></div>
+</div>
 
 <!-- SECTION: main -->
 <main>
@@ -220,6 +259,7 @@ function stripAccents(s) {
 /* SECTION: init */
 function init() {
     entries = STRONG_DATA;
+    buildWordIndex();
     var h = entries.filter(function(e) { return e.l === 'H'; }).length;
     var g = entries.filter(function(e) { return e.l === 'G'; }).length;
     searchEl.addEventListener('input', function() { onSearch(); });
@@ -421,6 +461,74 @@ function changeFont(delta) {
     fontSizeLabel.textContent = fontSize;
 }
 
+
+/* SECTION: word-index */
+const wordIndexData = {};
+
+function buildWordIndex() {
+    const groups = {};
+    for (let i = 0; i < entries.length; i++) {
+        const e = entries[i];
+        const w = e.w || '';
+        const first = w.trim().charAt(0) || '#';
+        if (!groups[first]) groups[first] = [];
+        groups[first].push({ word: w, idx: i, lang: e.l, num: e.n, translit: e.t });
+    }
+    for (const k of Object.keys(groups)) {
+        groups[k].sort((a, b) => a.word.localeCompare(b.word));
+        wordIndexData[k] = groups[k];
+    }
+    renderWordIndex('');
+}
+
+function renderWordIndex(filter) {
+    const wordsEl = document.getElementById('panelWords');
+    const sorted = Object.keys(wordIndexData).sort();
+
+    let html = '';
+    const f = filter ? filter.toLowerCase() : '';
+    for (const l of sorted) {
+        let items = wordIndexData[l];
+        if (f) items = items.filter(item => item.word.toLowerCase().includes(f) || String(item.num).includes(f));
+        if (!items.length) continue;
+        html += `<div class="pw-group"><div class="pw-letter">${escHtml(l)}</div>`;
+        for (const item of items) {
+            html += `<div class="pw-item" data-idx="${item.idx}">${escHtml(item.word)} <span class="pw-count">#${item.num} ${item.lang}</span></div>`;
+        }
+        html += '</div>';
+    }
+    wordsEl.innerHTML = html || '<div class="pw-empty">Sin resultados</div>';
+
+    wordsEl.querySelectorAll('.pw-item').forEach(el => {
+        el.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.idx);
+            showEntry(idx);
+            closeIndex();
+            sidebarResults.querySelectorAll('.match').forEach(m => m.classList.remove('active'));
+            const match = sidebarResults.querySelector(`.match[data-idx="${idx}"]`);
+            if (match) match.classList.add('active');
+        });
+    });
+}
+
+function openIndex() {
+    document.getElementById('indexOverlay').classList.add('open');
+    document.getElementById('indexPanel').classList.add('open');
+    document.getElementById('indexSearch').value = '';
+    renderWordIndex('');
+    document.getElementById('indexSearch').focus();
+}
+function closeIndex() {
+    document.getElementById('indexOverlay').classList.remove('open');
+    document.getElementById('indexPanel').classList.remove('open');
+}
+
+document.getElementById('menuBtn').addEventListener('click', openIndex);
+document.getElementById('indexOverlay').addEventListener('click', closeIndex);
+document.getElementById('panelClose').addEventListener('click', closeIndex);
+document.getElementById('indexSearch').addEventListener('input', function() {
+    renderWordIndex(this.value);
+});
 
 init();
 
