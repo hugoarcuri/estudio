@@ -412,7 +412,7 @@ function showEntry(idx) {
     entryViewEl.innerHTML = `
         <div class="entry-card">
             <div class="entry-header">
-                <div class="word-line"><span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
+                <div class="word-line">${escHtml(e.w)} <span class="lang-badge ${e.l}">${e.l === 'H' ? 'Hebreo/Arameo' : 'Griego'}</span></div>
                 <div class="translit-line">${escHtml(e.t)}</div>
                 ${e.s.length ? `<div class="spanish-line">${e.s.map(s => '<span class="badge">' + escHtml(s) + '</span>').join('')}</div>` : ''}
                 <div class="header-meta">
@@ -506,11 +506,11 @@ function renderWordIndex(filter) {
     wordsEl.querySelectorAll('.pw-item').forEach(el => {
         el.addEventListener('click', function() {
             const idx = parseInt(this.dataset.idx);
+            const word = entries[idx].s[0] || entries[idx].t || String(entries[idx].n);
+            searchEl.value = word;
+            onSearch();
             showEntry(idx);
             closeIndex();
-            sidebarResults.querySelectorAll('.match').forEach(m => m.classList.remove('active'));
-            const match = sidebarResults.querySelector(`.match[data-idx="${idx}"]`);
-            if (match) match.classList.add('active');
         });
     });
 }
