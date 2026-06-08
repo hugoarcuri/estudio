@@ -58,7 +58,7 @@ header input { padding: 10px 16px; border: none; border-radius: 10px; font-size:
 header input::placeholder { color: #999; font-weight: 400; opacity: 0.7; font-size: 14px; }
 #verseRef { font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
 .lang-switch { display: inline-flex; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-.lang-switch button { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 700; padding: 5px 13px; cursor: pointer; transition: background 0.15s, color 0.15s; line-height: 1.2; }
+.lang-switch button { background: none; border: none; color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 500; font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; padding: 4px 14px; cursor: pointer; transition: background 0.15s, color 0.15s; line-height: 1.4; letter-spacing: 0.3px; text-transform: uppercase; }
 .lang-switch button:hover { background: rgba(255,255,255,0.08); }
 .lang-switch button.active { background: var(--accent); color: #1C1814; }
 #search.gr { font-family: "Gentium Plus", "Noto Serif", "SBL Greek", "Galatia SIL", "Palatino Linotype", serif; font-size: 17px; }
@@ -237,7 +237,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
     <h1>Kittel</h1>
     <div class="search-wrap">
         <input type="text" id="search" placeholder="Escribí una palabra en español…" autofocus>
-        <button class="menu-btn" id="menuBtn">☰</button>
+        <button class="menu-btn" id="menuBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
     </div>
     <div class="lang-switch" id="langSwitch">
         <button class="active" data-lang="ES">ES</button>
@@ -276,6 +276,7 @@ main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
                 <span id="fontSizeLabel">14</span>
                 <button class="font-btn" id="fontIncr">A+</button>
             </div>
+            <button class="theme-btn" id="themeBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
         </div>
         <div id="entry-view"></div>
     </div>
