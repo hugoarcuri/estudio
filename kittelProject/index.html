@@ -561,6 +561,7 @@ function renderSidebar(matches) {
         const active = m.idx === currentMatch ? ' active' : '';
         const preview = e.t.slice(0, 150).replace(/\s+/g, ' ') + '…';
         html += `<div class="match${active}" data-idx="${m.idx}">
+            <div class="griego">${escHtml(cleanEntryGreek(e.g, e.t))}</div>
             <div class="espanol">${e.e.map(s => escHtml(s)).join(', ')}</div>
         </div>`;
     }
