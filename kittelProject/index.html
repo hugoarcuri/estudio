@@ -397,7 +397,7 @@ function buildWordIndex() {
     for (let i = 0; i < entries.length; i++) {
         const words = entries[i].e;
         for (const w of words) {
-            const clean = w.charAt(0).toUpperCase();
+            const clean = w.charAt(0).toUpperCase().normalize('NFD').replace(/[\u0300-\u036F]/g, '');
             const letter = /[A-ZÁÉÍÓÚÑ]/.test(clean) ? clean : '#';
             if (!groups[letter]) groups[letter] = [];
             if (!groups[letter].some(item => item.word === w)) {
